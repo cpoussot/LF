@@ -26,8 +26,7 @@ switch CAS
     case 2 % Random
         ny  = 1;
         nu  = 1;
-        S   = rss(1,ny,nu);
-        S.D = 0;
+        S   = rss(2,ny,nu);
         S.E = eye(length(S.A));
 end
 %
@@ -81,11 +80,11 @@ xlabel('Real','Interpreter','latex')
 ylabel('Imag.','Interpreter','latex')
 legend({'Original' 'Loewner'},'Interpreter','latex','location','northwest')
 
-% w   = info.wr;
-% la  = info.lar;
-% 
-%syms s c 
-%Hlag = simplify((w*c./(s-la))/(c/(s-la)))
+w = info.wr;
+la = info.lar;
+
+syms s 
+1./(s-)
 %(w.*c/(s))
 
 

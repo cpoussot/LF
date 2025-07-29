@@ -121,8 +121,6 @@ elseif robj >= 1
 end
 Y   = L1(:,1:r);
 X   = R2(:,1:r);
-%X = [5 -5; 1 0; 0 1]; Y = X;
-
 Er  = -Y'*LL*X;
 Ar  = -Y'*SS*X;
 Br  = Y'*V;
@@ -147,7 +145,7 @@ Vt          = Tmu*Br; % "-"?
 Wt          = Cr*Tla; % "-"?
 Lt          = Tmu*Lr;
 Rt          = Rr*Tla;
-%eig(inv(Er)*(Ar+Br*Rr)), pause
+eig(LLt\())
 %%% Information
 % Loewner
 info.r      = r;
@@ -159,10 +157,6 @@ info.sv     = sv;
 info.sv_nu  = sv_nu;
 info.LL     = LL; 
 info.SS     = SS;
-info.X      = X;
-info.Y      = Y;
-info.R      = Rr;
-info.L      = Lr;
 % Barycentric form
 info.lar    = ipR;
 info.mur    = ipL;
