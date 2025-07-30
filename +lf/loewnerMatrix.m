@@ -15,8 +15,8 @@
 %         V = H(mu), where H(.) is the underlying model
 % 
 % Output arguments
-%  - LL : MIMO Loewner matrix (complex q.ny x k.nu)
-%  - SS : MIMO shifted Loewner matrix (complex q.ny x k.nu)
+%  - LL : MIMO Loewner matrix (q.ny x k.nu, complex)
+%  - SS : MIMO shifted Loewner matrix (q.ny x k.nu, complex)
 % 
 % Description
 % Computes the MIMO Loewner matrix in the single variable case, using the
