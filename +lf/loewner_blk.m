@@ -1,5 +1,6 @@
-% Author: C. Poussot-Vassal
-% 
+% Loewner algorithm (block version)
+% Author: C. Poussot-Vassal [MOR Digital Systems & ONERA]
+%
 % Syntax
 % [hr,info] = lf.loewner_blk(la,mu,W,V,opt)
 %  
@@ -44,7 +45,7 @@
 % 
 % Description
 % Loewner rules.
-% 
+%
 
 function [hr,info] = loewner_blk(la_,mu_,W,V,opt)
 

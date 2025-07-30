@@ -1,4 +1,5 @@
-% MIMO 1 parameter Loewner and shifted Loewner matrices.
+% Loewner block matrix
+% Author: C. Poussot-Vassal [MOR Digital Systems & ONERA]
 %
 % Syntax
 %  [LL, SS] = lf.loewnerMatrix(la, mu, W, V)
@@ -24,7 +25,6 @@
 %  W = H(la) and V = H(mu)
 % where H(s) is the single variable function to interpolate.
 %
-% MIMO Loewner 
 
 function [LL,SS] = loewnerMatrix(la_,mu_,W,V)
 

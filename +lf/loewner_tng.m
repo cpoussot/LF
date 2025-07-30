@@ -1,4 +1,5 @@
-% Author: C. Poussot-Vassal
+% Loewner algorithm (tangential version)
+% Author: C. Poussot-Vassal [MOR Digital Systems & ONERA]
 % 
 % Syntax
 % [hr,info] = lf.loewner_tng(la,mu,W,V,R,L,opt)
@@ -49,9 +50,9 @@
 % 
 % Description
 % Loewner rules.
-% 
+%
 
-function [hr,info] = loewner(la_,mu_,W_,V_,R,L,opt)
+function [hr,info] = loewner_tng(la_,mu_,W_,V_,R,L,opt)
 
 TOL_SV  = 1e-13;
 TOL_CC  = 1e-13;

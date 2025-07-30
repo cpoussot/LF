@@ -1,3 +1,7 @@
+% Chebychev point repartition
+% Author: C. Poussot-Vassal [MOR Digital Systems & ONERA]
+%
+
 function x = chebspace(a,b,n)
 
 x = zeros(1,n);
