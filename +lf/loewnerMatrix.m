@@ -1,3 +1,31 @@
+% MIMO 1 parameter Loewner and shifted Loewner matrices.
+%
+% Syntax
+%  [LL, SS] = lf.loewnerMatrix(la, mu, W, V)
+%  
+% Input arguments
+%  - la : interpolation points (k x 1, complex)
+%  - mu : interpolation points (q x 1, complex)
+%  - W  : k-dimensional ny x nu structure of the function/data evaluated 
+%         at points "la" (ny x nu x k, complex)
+%         W = H(la), where H(.) is the underlying model
+%  - V  : q-dimensional ny x nu structure of the function/data evaluated 
+%         at points "mu" (ny x nu x q, complex)
+%         V = H(mu), where H(.) is the underlying model
+% 
+% Output arguments
+%  - LL : MIMO Loewner matrix (complex q.ny x k.nu)
+%  - SS : MIMO shifted Loewner matrix (complex q.ny x k.nu)
+% 
+% Description
+% Computes the MIMO Loewner matrix in the single variable case, using the
+% system's data obtained from interpolation points, without using 
+% tangential interpolation. The data are as
+%  W = H(la) and V = H(mu)
+% where H(s) is the single variable function to interpolate.
+%
+% MIMO Loewner 
+
 function [LL,SS] = loewnerMatrix(la_,mu_,W,V)
 
 [ny,nu] = size(W(:,:,1));
