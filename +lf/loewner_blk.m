@@ -49,13 +49,18 @@
 
 function [hr,info] = loewner_blk(la_,mu_,W,V,opt)
 
-TOL_SV  = 1e-13;
 TOL_CC  = 1e-13;
+%
+if ~isempty(intersect(la_,mu_)) 
+    error('Repetition in "la" and "mu"')
+end
 %
 [ny,nu,~]   = size(W);
 if nargin < 5 || ~isa(opt,'struct')
-    D    = zeros(ny,nu);
-    robj = inf;
+    D           = zeros(ny,nu);
+    robj        = inf;
+    TOL_SV      = 1e-13;
+    MAKE_REAL   = true;
 elseif isa(opt,'struct')
     if isfield(opt,'target')
         robj = opt.target;
@@ -67,6 +72,11 @@ elseif isa(opt,'struct')
     else
         D = zeros(ny,nu);
     end
+    if isfield(opt,'real')
+        MAKE_REAL = opt.real;
+    else
+        MAKE_REAL = true;
+    end
 end
 %
 k   = length(la_);
@@ -75,7 +85,8 @@ q   = length(mu_);
 isCC = false;
 if (abs(sum(imag(la_.')))<TOL_CC) && ...
    (abs(sum(imag(mu_.')))<TOL_CC) && ...
-   (q==k)
+   (q==k) && ...
+   MAKE_REAL
     isCC = true;
 end
 
@@ -123,16 +134,22 @@ end
 % orders
 [L1,S1,~]   = svd([LL,SS],'econ','vector');
 [~,S2,R2]   = svd([SS',LL']','econ','vector');
+S           = S1;
+if numel(S2) < numel(S1)
+    S = S2;
+end
 S_nu        = svd(LL,'econ','vector');
-sv          = S1/S1(1,1);
+sv          = S/S(1,1);
 sv_nu       = S_nu/S_nu(1,1);
-nu_         = sum(sv_nu>TOL_SV);
 if isempty(robj) | isinf(robj)
     r   = sum(sv>TOL_SV);
+    nu_ = sum(sv_nu>TOL_SV);
 elseif robj < 1
     r   = sum(sv>robj);
+    nu_ = sum(sv_nu>robj);
 elseif robj >= 1
     r   = robj;
+    nu_ = robj;
 end
 Y   = L1(:,1:r);
 X   = R2(:,1:r);
@@ -169,12 +186,20 @@ Hr  = dss(Ar,Br,Cr,Dr,Er);
 info.r      = r;
 info.nu     = nu_;
 info.isCC   = isCC;
+if isCC
+    info.Jl = Jl;
+    info.Jr = Jr;
+end
 info.la     = la_(:);
 info.mu     = mu_(:);
 info.sv     = sv;
 info.sv_nu  = sv_nu;
 info.LL     = LL; 
 info.SS     = SS;
+info.LA     = diag(info.la);
+info.MU     = diag(info.mu);
+%info.L      = L;
+%info.R      = R;
 info.V      = VV;
 info.W      = WW;
 info.D      = D;

@@ -21,6 +21,7 @@
 %              automatic (if Inf or [])
 %    * D     : D-term (ny x nu, complex)
 %              /!\ use with discretion
+%    * real  : boolean to try (if possible) real realization 
 % 
 % Output arguments
 %  - hr   : approximation model (handle function)
@@ -35,6 +36,9 @@
 %    * sv_nu: normalized singular values of LL (min(q,k), real)
 %    * LL   : Loewner matrix (q x k, complex)
 %    * SS   : shifted Loewner matrix (q x k, complex)
+%    * LA   : Lambda matrix (k x k, complex)
+%    * MU   : Mu matrix (q x q, complex)
+%    * L,R  : left, right tangential data (data x tangent directions)
 %    * V,W  : tangential input and output matrices (q x nu & ny x k, complex)
 %    * D    : D-term (ny x nu, complex)
 %    * H    : full Loewner form (handle function)
@@ -48,19 +52,38 @@
 %    * mut  : compressed row (left) interpolation points (r x 1, complex)
 %    * ... Others not documented yet
 % 
+% Note 
+% Sylvester equations 
+%    MU*LL-LL*LA = V*R-L*W 
+%    MU*SS-SS*LA = MU*V*R-L*W*LA
+% may be checked for complex form only, i.e.
+% if ~info.isCC
+%   test1 = info.MU*info.LL - info.LL*info.LA;
+%   test2 = info.V*info.R - info.L*info.W;
+%   norm(test1-test2) % small
+%   test1 = info.MU*info.SS - info.SS*info.LA;
+%   test2 = info.MU*info.V*info.R - info.L*info.W*info.LA;
+%   norm(test1-test2) % small
+% end
+% 
 % Description
 % Loewner rules.
 %
 
 function [hr,info] = loewner_tng(la_,mu_,W_,V_,R,L,opt)
 
-TOL_SV  = 1e-13;
-TOL_CC  = 1e-13;
+TOL_CC  = 1e-12;
+%
+if ~isempty(intersect(la_,mu_)) 
+    error('Repetition in "la" and "mu"')
+end
 %
 [ny,nu,~]   = size(W_);
 if nargin < 7 || ~isa(opt,'struct')
-    D    = zeros(ny,nu);
-    robj = inf;
+    D           = zeros(ny,nu);
+    robj        = inf;
+    TOL_SV      = 1e-13;
+    MAKE_REAL   = true;
 elseif isa(opt,'struct')
     if isfield(opt,'target')
         robj = opt.target;
@@ -72,17 +95,15 @@ elseif isa(opt,'struct')
     else
         D = zeros(ny,nu);
     end
+    if isfield(opt,'real')
+        MAKE_REAL = opt.real;
+    else
+        MAKE_REAL = true;
+    end
 end
 %
 k   = length(la_);
 q   = length(mu_);
-% 
-isCC = false;
-if (abs(sum(imag(la_.')))<TOL_CC) && ...
-   (abs(sum(imag(mu_.')))<TOL_CC) && ...
-   (q==k)
-    isCC = true;
-end
 
 %%% Reshape data
 W   = zeros(ny,k);
@@ -92,6 +113,17 @@ for ii = 1:k
 end
 for ii = 1:q
     V(ii,1:nu) = L(ii,:)*V_(:,:,ii);
+end
+
+%%% Complex conjugation
+isCC = false;
+if (abs(sum(imag(la_)))<TOL_CC) && ...
+   (abs(sum(imag(mu_)))<TOL_CC) && ...
+   (abs(sum(imag(W(:))))<TOL_CC) && ...
+   (abs(sum(imag(V(:))))<TOL_CC) && ...
+   (q==k) && ...
+   MAKE_REAL
+    isCC = true;
 end
 
 %%% Loewner matrices
@@ -109,8 +141,8 @@ end
 
 %%% D-term
 if ~norm(D) == 0
-    L   = ones(q,ny);
-    R   = ones(nu,k);
+    %L   = ones(q,ny);
+    %R   = ones(nu,k);
     SS  = (SS - L*D*R);
     V   = V - L*D;
     W   = W - D*R;
@@ -140,16 +172,22 @@ end
 % orders
 [L1,S1,~]   = svd([LL,SS],'econ','vector');
 [~,S2,R2]   = svd([SS',LL']','econ','vector');
+S           = S1;
+if numel(S2) < numel(S1)
+    S = S2;
+end
 S_nu        = svd(LL,'econ','vector');
-sv          = S1/S1(1,1);
+sv          = S/S(1,1);
 sv_nu       = S_nu/S_nu(1,1);
-nu_         = sum(sv_nu>TOL_SV);
 if isempty(robj) | isinf(robj)
     r   = sum(sv>TOL_SV);
+    nu_ = sum(sv_nu>TOL_SV);
 elseif robj < 1
     r   = sum(sv>robj);
+    nu_ = sum(sv_nu>robj);
 elseif robj >= 1
     r   = robj;
+    nu_ = robj;
 end
 Y   = L1(:,1:r);
 X   = R2(:,1:r);
@@ -186,12 +224,19 @@ Rt          = Rr*Tla;
 info.r      = r;
 info.nu     = nu_;
 info.isCC   = isCC;
+if isCC
+    info.J  = J;
+end
 info.la     = la_(:);
 info.mu     = mu_(:);
 info.sv     = sv;
 info.sv_nu  = sv_nu;
 info.LL     = LL; 
 info.SS     = SS;
+info.LA     = diag(info.la);
+info.MU     = diag(info.mu);
+info.L      = L;
+info.R      = R;
 info.V      = V;
 info.W      = W;
 info.D      = D;
