@@ -8,13 +8,12 @@ list_factory = fieldnames(get(groot,'factory')); index_interpreter = find(contai
 setenv('MDSHOME','/Users/charles/Documents/MDS')
 addpath('/Users/charles/Documents/MDS/mdspack/MDSPACK/osx/v1.1.0/API/matlab/')
 addpath('/Users/charles/Documents/MDS/mdspack/MDSPACK/osx/v1.1.0/bin')
-%
+
 %%% General variables 
 lw      = 3;  % linewidth
 mw      = 20; % markersize
 CAS     = 2;
-%
-%rng(1)
+
 %%% Select example
 nip = 100;
 switch CAS
@@ -74,7 +73,7 @@ end
 opt         = [];
 opt.target  = 1e-12;
 opt.D       = 0*ones(ny,nu);
-opt.real    = true;
+opt.real    = false;
 % Tangential 
 [htng,itng] = lf.loewner_tng(la_,mu_,W,V,R,L,opt);
 itng
@@ -86,7 +85,6 @@ if ~itng.isCC
     test2 = itng.MU*itng.V*itng.R - itng.L*itng.W*itng.LA;
     norm(test1-test2)
 end
-%%
 % Block
 [hblk,iblk] = lf.loewner_blk(la_,mu_,W,V,opt);
 iblk
@@ -123,7 +121,7 @@ figure, hold on
 mdspack.bodemag(G,w,'-')
 mdspack.bodemag(htng,w,'--')
 mdspack.bodemag(hblk,w,':')
-legend({'Original' 'Loewner tangent' 'Loewner block'},'Interpreter','latex','location','northwest')
+legend({'Original' 'Loewner tangent' 'Loewner block'},'Interpreter','latex','location','best')
 
 %hdiag  = dss(itng.SSt,itng.Vt,itng.Wt,0,itng.LLt);
 % for i = 1:length(itng.lat)

@@ -12,9 +12,8 @@ addpath('/Users/charles/Documents/MDS/mdspack/MDSPACK/osx/v1.1.0/bin')
 %%% General variables 
 lw      = 3;  % linewidth
 mw      = 20; % markersize
-CAS     = 4;
-%
-%rng(2)
+CAS     = 2;
+
 %%% Select example
 nip = 100;
 switch CAS
@@ -62,8 +61,14 @@ mu_ = (logspace(-2,2,nip)+.1)*1i; mu_ = sort([mu_ conj(mu_)]);
 %mu_ = (logspace(-2,2,nip+5)+.1);
 k   = length(la_);
 q   = length(mu_);
-R   = 3*ones(nu,k);
-L   = -ones(q,ny);
+R   = ones(nu,k);
+L   = ones(q,ny);
+% i = 1;
+% while i < q
+%     L(i,1:ny)   = 1+1i*randn(1,ny);
+%     L(i+1,1:ny) = conj(L(i,1:ny)); 
+%     i = i+2;
+% end
 for ii = 1:k
     W(1:ny,1:nu,ii) = G(la_(ii));
 end
@@ -74,7 +79,7 @@ end
 %%% Loewner 
 opt         = [];
 opt.target  = 1e-12;
-opt.D       = 1*ones(ny,nu);
+opt.D       = 0*ones(ny,nu);
 opt.real    = true;
 % Tangential 
 [htng,itng] = lf.loewner_tng(la_,mu_,W,V,R,L,opt);
@@ -94,15 +99,13 @@ end
 isreal(itng.Hr)
 size(itng.Hr)
 
-%
 figure, hold on, grid on
 plot(itng.sv,'-o','MarkerSize',mw,'LineWidth',lw)
 plot(itng.sv_nu,'-x','MarkerSize',mw,'LineWidth',lw)
 set(gca,'YScale','log')
 xlabel('$k$','Interpreter','latex')
 ylabel('Normalized singular value','Interpreter','latex')
-legend({'svd($[\bf{L},\bf{M}]$)','svd($\bf{L}$)', ... 
-        'svd($[\bf{L},\bf{M}]$)','svd($\bf{L}$)'},'interpreter','latex')
+legend({'svd($[\bf{L},\bf{M}]$)','svd($\bf{L}$)'},'interpreter','latex')
 
 eigHt = eig(itng.Hr);
 figure, hold on, grid on
@@ -110,11 +113,11 @@ plot(real(eigS),imag(eigS),'.','MarkerSize',mw,'LineWidth',lw);
 plot(real(eigHt),imag(eigHt),'o','MarkerSize',mw,'LineWidth',lw);
 xlabel('Real','Interpreter','latex')
 ylabel('Imag.','Interpreter','latex')
-legend({'Original' 'Loewner tangent' 'Loewner block'},'Interpreter','latex','location','northwest')
+legend({'Original' 'Loewner tangent'},'Interpreter','latex','location','northwest')
 
 w = logspace(-2,3,300);
 figure, hold on
 mdspack.bodemag(G,w,'-')
 mdspack.bodemag(htng,w,'--')
-legend({'Original' 'Loewner tangent' 'Loewner block'},'Interpreter','latex','location','northwest')
+legend({'Original' 'Loewner tangent'},'Interpreter','latex','location','best')
 
