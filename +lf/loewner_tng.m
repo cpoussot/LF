@@ -145,11 +145,9 @@ end
 
 %%% D-term
 if ~norm(D) == 0
-    %L   = ones(q,ny);
-    %R   = ones(nu,k);
     SS  = (SS - L*D*R);
     V   = V - L*D;
-    W   = W - D*R;
+    W   = W - D*R;% - ou + ???
 end
 
 %%% Go real
@@ -193,16 +191,27 @@ elseif robj >= 1
     r   = robj;
     nu_ = robj;
 end
-Y   = L1(:,1:r);
-X   = R2(:,1:r);
-% compressed
-Er  = -Y'*LL*X;
-Ar  = -Y'*SS*X;
-Br  = Y'*V;
-Cr  = W*X;
-Dr  = D;
-Lr  = Y'*L;
-Rr  = R*X;
+X = []; Y = [];
+if robj > 0
+    Y   = L1(:,1:r);
+    X   = R2(:,1:r);
+    % compressed
+    Er  = -Y'*LL*X;
+    Ar  = -Y'*SS*X;
+    Br  = Y'*V;
+    Cr  = W*X;
+    Dr  = D;
+    Lr  = Y'*L;
+    Rr  = R*X;
+else
+    Er  = -LL;
+    Ar  = -SS;
+    Br  = V;
+    Cr  = W;
+    Dr  = D;
+    Lr  = L;
+    Rr  = R;
+end
 
 %%% Output
 hr  = @(s) Cr*((Er*s-Ar)\Br) + Dr;

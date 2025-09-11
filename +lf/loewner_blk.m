@@ -121,14 +121,45 @@ end
 
 %%% Go real
 if isCC
-    J0  = 1/sqrt(2) * [1 1i; 1 -1i]; % J0'*J0 = I
-    Jl  = kron(eye(length(la_)/2),kron(J0,eye(ny)));
-    Jr  = kron(eye(length(mu_)/2),kron(J0,eye(nu)));
+    J0  = (1/sqrt(2))*[1 1i; 1 -1i];
+    Jl  = [];
+    kk  = 1;
+    while kk <= length(la_)
+        if imag(la_(kk)) == 0
+            Jl  = blkdiag(Jl,eye(ny));
+            kk  = kk + 1;
+        else
+            Jl  = blkdiag(Jl,kron(J0,eye(ny)));
+            kk  = kk + 2;
+        end
+    end
+    Jr  = [];
+    kk  = 1;
+    while kk <= length(mu_)
+        if imag(mu_(kk)) == 0
+            Jr  = blkdiag(Jr,eye(nu));
+            kk  = kk + 1;
+        else
+            Jr  = blkdiag(Jr,kron(J0,eye(nu)));
+            kk  = kk + 2;
+        end
+    end
     LL  = real(Jl'*LL*Jr);
     SS  = real(Jl'*SS*Jr);
     WW  = real(WW*Jr);
     VV  = real(Jl'*VV);
 end
+
+% %%% Go real
+% if isCC
+%     J0  = 1/sqrt(2) * [1 1i; 1 -1i]; % J0'*J0 = I
+%     Jl  = kron(eye(length(la_)/2),kron(J0,eye(ny)));
+%     Jr  = kron(eye(length(mu_)/2),kron(J0,eye(nu)));
+%     LL  = real(Jl'*LL*Jr);
+%     SS  = real(Jl'*SS*Jr);
+%     WW  = real(WW*Jr);
+%     VV  = real(Jl'*VV);
+% end
 
 %%% Compressed model
 % orders
