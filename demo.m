@@ -10,16 +10,15 @@ addpath('/Users/charles/Documents/MDS/mdspack/MDSPACK/osx/v1.1.0/API/matlab/')
 addpath('/Users/charles/Documents/MDS/mdspack/MDSPACK/osx/v1.1.0/bin')
 
 %%% General variables 
-lw      = 3;  % linewidth
-mw      = 20; % markersize
-CAS     = 4;
+lw  = 3;  % linewidth
+mw  = 20; % markersize
 
 %%% Select example
 % 'siso_simple'
 % 'siso_passive'
 % 'mimo_rand'
 % 'mimo_large' 
-[G,S,nu,ny,eigS] = lf.examples('siso_simple');
+[G,S,nu,ny] = lf.examples('mimo_large');
 
 %%% Data
 nip = 100;
@@ -63,8 +62,7 @@ size(itng.Hr)
 size(iblk.Hr) 
 [isreal(itng.Hr) isreal(iblk.Hr)]
 
-
-%%%
+%%% Plot
 figure, hold on, grid on
 plot(itng.sv,'-o','MarkerSize',mw,'LineWidth',lw)
 plot(itng.sv_nu,'-x','MarkerSize',mw,'LineWidth',lw)
@@ -76,6 +74,7 @@ ylabel('Normalized singular value','Interpreter','latex')
 legend({'svd($[\bf{L},\bf{M}]$)','svd($\bf{L}$)', ... 
         'svd($[\bf{L},\bf{M}]$)','svd($\bf{L}$)'},'interpreter','latex')
 
+eigS  = eig(S);
 eigHt = eig(itng.Hr);
 eigHb = eig(iblk.Hr);
 figure, hold on, grid on

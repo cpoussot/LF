@@ -10,14 +10,13 @@ addpath('/Users/charles/Documents/MDS/mdspack/MDSPACK/osx/v1.1.0/API/matlab/')
 addpath('/Users/charles/Documents/MDS/mdspack/MDSPACK/osx/v1.1.0/bin')
 
 %%% General variables 
-lw      = 3;  % linewidth
-mw      = 20; % markersize
-CAS     = 4;
+lw  = 3;  % linewidth
+mw  = 20; % markersize
 
 %%% Select example
 % 'siso_passive'
-[G,S,nu,ny,eigS]    = lf.examples('siso_passive');
-[SZ_v,SZ,~,~]       = lf.spectral_zeros(S);
+[G,S,nu,ny]     = lf.examples('siso_passive');
+[SZ_v,SZ,~,~]   = lf.spectral_zeros(S);
 r = 1e-12
 
 %%% Data
@@ -92,6 +91,7 @@ opt.target  = -1;
 % ylabel('Normalized singular value')
 % legend({'svd($[\bf{L},\bf{M}]$)','svd($\bf{L}$)'})
 % 
+% eigS  = eig(S);
 % eigHt = eig(itng.Hr);
 % figure, hold on, grid on
 % plot(real(eigS),imag(eigS),'.','MarkerSize',mw,'LineWidth',lw);
