@@ -13,7 +13,17 @@ switch CAS
         nu  = size(B,2);
         ny  = nu;
         C   = B';
-        D   = 1*eye(nu);
+        D   = 2*eye(nu);
+        E   = eye(size(A));
+        S   = dss(A,B,C,D,E);
+    case 'siso_passive_gugercin' % Passive RLC
+        load('+lf/rlc_serkan200.mat')
+        %A   = [-20 -10 0 0 0; 10 0 -10 0 0; 0 10 0 -10 0; 0 0 10 0 -10; 0 0 0 10 -2];
+        %B   = [20 0 0 0 0]';
+        nu  = size(B,2);
+        ny  = nu;
+        %C   = B';
+        %D   = 2*eye(nu);
         E   = eye(size(A));
         S   = dss(A,B,C,D,E);
     case 'siso_simple' % Very simple
