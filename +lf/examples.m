@@ -38,7 +38,7 @@ switch CAS
         S   = dss(A,B,C,D,E);
     case 'mimo_passive_aca' % Passive RLC by ACA
         A   = [-20 -10 0 0 0; 10 0 -10 0 0; 0 10 0 -10 0; 0 0 10 0 -10; 0 0 0 10 -2];
-        B   = [20 0 0 0 0; 0 0 20 0 0]';
+        B   = [20 0 0 0 0; 0 0 20 0 0; 0 0 0 0 1]';
         nu  = size(B,2);
         ny  = nu;
         C   = B';
