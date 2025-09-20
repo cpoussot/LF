@@ -142,6 +142,7 @@ for ii = 1:q
         SS(ii,jj)   = num2/den;
     end
 end
+%norm(-SS-SS') 
 
 %%% D-term
 if ~norm(D) == 0
