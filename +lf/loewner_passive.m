@@ -43,9 +43,9 @@ info2.Hr.D      = info2.Hr.D - Ds;
 %tol_hermite = 1e-10;
 %[isstable(info2.Hr) isPassive(info2.Hr) norm(info2.LL-conj(info2.LL.'))<tol_hermite]
 % step 4: normalized passive
-[R,flag]    = chol(info2.LL); % R'*R = E (E > 0)
-invR        = R\eye(length(R));
-Hr          = ss(-invR'*info2.Hr.A*invR,-invR'*info2.Hr.B,info2.Hr.C*invR,info2.Hr.D);
+[T,flag]    = chol(info2.LL); % R'*R = E (E > 0)
+invT        = T\eye(length(T));
+Hr          = ss(-invT'*info2.Hr.A*invT,-invT'*info2.Hr.B,info2.Hr.C*invT,info2.Hr.D);
 In          = eye(length(Hr.A));
 hrp         = @(s) Hr.C*((s*In-Hr.A)\Hr.B)+Hr.D;
 %
@@ -53,6 +53,8 @@ info.sz_R       = sz_R;
 info.sz_R_pos   = sz_R_pos;
 info.sz_la      = sz_la;
 info.sz_la_pos  = sz_la_pos;
+info.info_p     = info2;
+info.Vchol      = invT;
 %
 info.chol_flag  = flag;
 info.Hr         = Hr;
