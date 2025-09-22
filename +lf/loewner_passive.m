@@ -46,15 +46,19 @@ info2.Hr.D      = info2.Hr.D - Ds;
 [T,flag]    = chol(info2.LL); % R'*R = E (E > 0)
 invT        = T\eye(length(T));
 Hr          = ss(-invT'*info2.Hr.A*invT,-invT'*info2.Hr.B,info2.Hr.C*invT,info2.Hr.D);
-In          = eye(length(Hr.A));
+rr          = length(Hr.A);
+In          = eye(rr);
 hrp         = @(s) Hr.C*((s*In-Hr.A)\Hr.B)+Hr.D;
 %
+info            = info2;
+info.X          = eye(rr);
+info.Y          = eye(rr);
+% 
 info.sz_R       = sz_R;
 info.sz_R_pos   = sz_R_pos;
 info.sz_la      = sz_la;
 info.sz_la_pos  = sz_la_pos;
-info.info_p     = info2;
-info.Vchol      = invT;
 %
+info.Vchol      = invT;
 info.chol_flag  = flag;
-info.Hr         = Hr;
+info.Hrn        = Hr;
