@@ -30,6 +30,7 @@
 %    * nu   : McMilan degree (integer)
 %    * isCC : is complex conjugated (boolean)
 %             if true, most of the matrices are converted to real
+%    * J    : complex to real transformation matrix (k x q, complex)
 %    * la   : lambda's column interpolation points (k x 1, complex)
 %    * mu   : mu's row interpolation points (q x 1, complex)
 %    * sv   : normalized singular values of [LL SS] (min(q,k), real)

@@ -28,7 +28,7 @@ mu_ = (logspace(-2,2,nip)+.1)*1i; mu_ = sort([mu_ conj(mu_)]);
 %mu_ = [(logspace(-2,2,nip-2)+.1) -1i 1i];
 k   = length(la_);
 q   = length(mu_);
-R   = 3*ones(nu,k);
+R   = ones(nu,k);
 L   = ones(q,ny);
 for ii = 1:k
     W(1:ny,1:nu,ii) = G(la_(ii));
