@@ -74,6 +74,7 @@
 function [hr,info] = loewner_tng(la_,mu_,W_,V_,R,L,opt)
 
 TOL_CC  = 1e-12;
+TOL_SV  = 1e-15;
 %
 if ~isempty(intersect(la_,mu_)) 
     error('Repetition in "la" and "mu"')
@@ -83,7 +84,6 @@ end
 if nargin < 7 || ~isa(opt,'struct')
     D           = zeros(ny,nu);
     robj        = inf;
-    TOL_SV      = 1e-13;
     MAKE_REAL   = true;
 elseif isa(opt,'struct')
     if isfield(opt,'target')

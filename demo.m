@@ -30,12 +30,8 @@ k   = length(la_);
 q   = length(mu_);
 R   = ones(nu,k);
 L   = ones(q,ny);
-for ii = 1:k
-    W(1:ny,1:nu,ii) = G(la_(ii));
-end
-for ii = 1:q
-    V(1:ny,1:nu,ii) = G(mu_(ii));
-end
+for ii = 1:k; W(1:ny,1:nu,ii) = G(la_(ii)); end
+for ii = 1:q; V(1:ny,1:nu,ii) = G(mu_(ii)); end
 
 %%% Loewner 
 opt         = [];

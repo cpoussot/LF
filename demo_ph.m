@@ -22,13 +22,13 @@ mw  = 20; % markersize
 r = 2%1e-12
 
 %%% Data
-% nip     = 50;
-% puls    = logspace(-1,2,nip);
-% la      = puls(1:2:end)*1i; la = sort([la conj(la)]);
-% mu      = puls(2:2:end)*1i; mu = sort([mu conj(mu)]);
-pts     = linspace(.1,50,20);
-la      = pts(1:2:end);
-mu      = pts(2:2:end);
+nip     = 100;
+puls    = logspace(-1,2,nip);
+la      = puls(1:2:end)*1i; la = sort([la conj(la)]);
+mu      = puls(2:2:end)*1i; mu = sort([mu conj(mu)]);
+% pts     = linspace(.1,50,20);
+% la      = pts(1:2:end);
+% mu      = pts(2:2:end);
 k       = length(la);
 q       = length(mu);
 R       = ones(nu,k);
