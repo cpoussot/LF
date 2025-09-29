@@ -28,7 +28,7 @@ The present page does not aim neither at describing this framework in details no
 	Pages 	= {499-530},
 	Title 	= {{Data-driven modeling and control of large-scale dynamical systems in the Loewner framework}},
 	Volume 	= {23},
-  Month   = {January},
+  	Month   = {January},
 	Year 	= {2022},
         Note    = {\url{https://doi.org/10.1016/bs.hna.2021.12.015}}, 
 }
