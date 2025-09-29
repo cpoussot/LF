@@ -40,5 +40,24 @@ The code (`+lf` folder)  provided in this GitHub page is given for open science 
 
 ## A simple MATLAB code example
 
+Here is a simple code that describes how to deploy the LF. Code below is `demo.m`.
 
+First add the path where the `+mlf` package is.
+
+```Matlab
+%addpath("location_of_lf") % Add the location of the +lf package
+```
+
+## Functions description
+
+
+## Feedbacks
+
+Please send any comment to C. Poussot-Vassal (charles.poussot-vassal@onera.fr) if you want to report any bug or user experience issues.
+
+## Disclaimer
+
+Once again, this deposit consitutes a research code that accompany the paper mentionned above. It is not aimed to be included in any third party software without the consent of the authors. Authors decline responsabilities in case of problem when applying the code.
+
+Notice also that pathological cases may appear. A more advanced code, to deal with practical and theoretical issues/limitations is currently under developpement by the authors.
 
