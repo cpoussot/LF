@@ -20,8 +20,8 @@ V_  = V_ + Ds;
 [h_loe,info_loe]    = lf.loewner_tng(la_,mu_,W_-D,V_-D,R,L,opt);
 info_loe.Dr         = D;
 info_loe.Hr.D       = D;
-[info_loe.Hr,disc]  = stabsep(info_loe.Hr);
-damp(info_loe.Hr)
+[info_loe.Hr,~]     = stabsep(info_loe.Hr);
+%damp(info_loe.Hr)
 h_loe               = @(s) info_loe.Hr.C*((s*info_loe.Hr.E-info_loe.Hr.A)\info_loe.Hr.B) + info_loe.Hr.D;
 
 % step 2: spectral zeros
