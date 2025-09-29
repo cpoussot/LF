@@ -30,7 +30,7 @@ The present page does not aim neither at describing this framework in details no
 	Volume 	= {23},
   	Month   = {January},
 	Year 	= {2022},
-        Note    = {\url{https://doi.org/10.1016/bs.hna.2021.12.015}}, 
+	Note    = {\url{https://doi.org/10.1016/bs.hna.2021.12.015}}, 
 }
 ```
 
