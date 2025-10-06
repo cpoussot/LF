@@ -21,7 +21,6 @@ V_  = V_ + Ds;
 info_loe.Dr         = D;
 info_loe.Hr.D       = D;
 [info_loe.Hr,~]     = stabsep(info_loe.Hr);
-%damp(info_loe.Hr)
 h_loe               = @(s) info_loe.Hr.C*((s*info_loe.Hr.E-info_loe.Hr.A)\info_loe.Hr.B) + info_loe.Hr.D;
 
 % step 2: spectral zeros
@@ -46,7 +45,12 @@ info2.Hr.D      = info2.Hr.D - Ds;
 %[isstable(info2.Hr) isPassive(info2.Hr) norm(info2.LL-conj(info2.LL.'))<tol_hermite]
 % step 4: normalized passive
 [T,flag]    = chol(info2.LL); % R'*R = E (E > 0)
-invT        = T\eye(length(T));
+if flag == 0
+    invT    = T\eye(length(T));
+else
+    warning('Cholesky decomposition issue')
+    invT    = eye(length(info2.Hr.A));
+end
 Hr          = ss(-invT'*info2.Hr.A*invT,-invT'*info2.Hr.B,info2.Hr.C*invT,info2.Hr.D);
 rr          = length(Hr.A);
 In          = eye(rr);
