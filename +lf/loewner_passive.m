@@ -10,7 +10,7 @@ elseif isa(opt,'struct')
     if isfield(opt,'Ds')
         Ds  = opt.Ds*eye(nu);
     else
-        Ds = 0*eye(nu);
+        Ds  = 0*eye(nu);
     end
 end
 D   = D  + Ds;
