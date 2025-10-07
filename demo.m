@@ -4,21 +4,17 @@ set(groot,'defaultlinelinewidth',2)
 set(groot,'defaultlinemarkersize',4)
 set(groot,'defaultaxesfontsize',18)
 list_factory = fieldnames(get(groot,'factory')); index_interpreter = find(contains(list_factory,'Interpreter')); for i = 1:length(index_interpreter); set(groot, strrep(list_factory{index_interpreter(i)},'factory','default'),'latex'); end
-% MDSPACK
-setenv('MDSHOME','/Users/charles/Documents/MDS')
-addpath('/Users/charles/Documents/MDS/mdspack/MDSPACK/osx/v1.1.0/API/matlab/')
-addpath('/Users/charles/Documents/MDS/mdspack/MDSPACK/osx/v1.1.0/bin')
 
 %%% General variables 
 lw  = 3;  % linewidth
 mw  = 20; % markersize
 
 %%% Select example
-% 'siso_simple'
-% 'siso_passive'
-% 'mimo_rand'
-% 'mimo_large' 
-[G,S,nu,ny] = lf.examples('mimo_large');
+CAS = 'siso_simple';
+CAS = 'siso_passive_simple';
+CAS = 'mimo_rand';
+CAS = 'mimo_large';
+[G,S,nu,ny] = lf.examples(CAS);
 
 %%% Data
 nip = 100;
@@ -82,20 +78,22 @@ ylabel('Imag.','Interpreter','latex')
 legend({'Original' 'Loewner tangent' 'Loewner block'},'Interpreter','latex','location','northwest')
 
 w = logspace(-2,3,300);
-figure, hold on
-mdspack.bodemag(G,w,'-')
-mdspack.bodemag(htng,w,'--')
-mdspack.bodemag(hblk,w,':')
-legend({'Original' 'Loewner tangent' 'Loewner block'},'Interpreter','latex','location','best')
+for i = 1:numel(w)
+    G_(1:ny,1:nu,i)     = G(w(i));
+    htng_(1:ny,1:nu,i)  = htng(w(i));
+    hblk_(1:ny,1:nu,i)  = hblk(w(i));
+end
 
-%hdiag  = dss(itng.SSt,itng.Vt,itng.Wt,0,itng.LLt);
-% for i = 1:length(itng.lat)
-%     Glat(i) = G(itng.lat(i));
-%     Hlat(i) = hr(itng.lat(i));
-% end
-% vpa([Glat(:) Hlat(:) itng.wt(:)],4)
-% for i = 1:length(itng.mut)
-%     Gmut(i) = G(itng.mut(i));
-%     Hmut(i) = hr(itng.mut(i));
-% end
-% vpa([Gmut(:) Hmut(:) itng.vt(:)],4)
+figure, hold on, kk = 0;
+for out = 1:ny
+    for in = 1:nu
+        kk = kk + 1;
+        subplot(ny,nu,kk), hold on, grid on
+        plot(w,20*log10(abs(squeeze(G_(out,in,:)))),'-'), set(gca,'XScale','log')
+        plot(w,20*log10(abs(squeeze(htng_(out,in,:)))),'--'), set(gca,'XScale','log')
+        plot(w,20*log10(abs(squeeze(hblk_(out,in,:)))),':'), set(gca,'XScale','log')
+        if out==ny; xlabel('pulsation [rad/s]'); end
+    end
+end
+sgtitle('Bode magnitude')
+legend({'Original' 'Loewner tangent' 'Loewner block'},'Interpreter','latex','location','best')
