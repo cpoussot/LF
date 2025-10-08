@@ -12,10 +12,11 @@ It is suited to approximate, from any data-set:
 
 ## Contribution (dis)claim
 
-The present page does not aim neither at describing this framework in details nor providing a novel contribution, but rather to provide elementary ingredients to test and teach the LF thanks to MATLAB codes and the package . The latter includes the following features:
-- to approximate any SISO to MIMO data-set with a rational functions;
+The present page does not aim neither at describing this framework in details nor providing a novel contribution, but rather to provide elementary ingredients to test and teach the LF thanks to MATLAB codes and the package `+lf`. The latter includes the following features and function:
+- approximate any SISO to MIMO data-set with a rational functions;
 - with controlled complexity; 
-- and with passivity preservation;
+- with passivity preservation;
+- and with port Hamiltonian realization.
 
 ## Main reference (from author)
 
@@ -42,13 +43,15 @@ The code (`+lf` folder)  provided in this GitHub page is given for open science 
 
 Here is a simple code that describes how to deploy the LF. Code below is `demo.m`.
 
-First add the path where the `+mlf` package is.
+First add the path where the `+mlf` package is located.
 
 ```Matlab
 %addpath("location_of_lf") % Add the location of the +lf package
 ```
 
 ## Functions description
+
+Soon
 
 
 ## Feedbacks
