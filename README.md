@@ -69,6 +69,8 @@ Notice also that pathological cases may appear. A more advanced code, to deal wi
 
 # Exercises suggestions
 
+The three following exercises are set up to discover the LF and some of its features. It can be used to discover step by step how to set up and solve the interpolation problem.
+
 ## Exercise \#1: first try with Loewner
 
 Define two toy rational transfer functions $G_1(s) = \frac{1}{2+s}$ and  $G_2(s) = \frac{s+1}{5+s}$ as a Matlab handle functions.
@@ -170,7 +172,33 @@ Examinate the outputs `htng_real` and `itng_real`, and conclude
 Notice that the matrices and values are now real.
 
 
-## Exercise \#3: about passive models and pH systems
+## Exercise \#3: about reduction, passive models and pH systems
 
-### Construct the real rational interpolant (apply Loewner tangential)
+### Run the demo file
+
+Now we suggest to try the script `demo_ph.m`. The latter uses the very same LF but with an additional step to ensure passivity and port Hamiltonian structre. Please spend some time to test the different models proposed
+```Matlab
+CAS = 'siso_passive_simple'; r = 1e-12
+CAS = 'siso_passive_aca'; r = 1e-12
+CAS = 'siso_passive_gugercin'; r = 5
+CAS = 'mimo_passive_aca'; r = 5
+```
+
+Examinate the outputs of the passive rational approximant `hloep`, `info_loep` and `info_loeph`, and conclude
+- on the approximation order and McMillan degree;
+- on the accuracy of the eigenvalues of the obtained model;
+- on the normalized singular values of the Loewner pencil;
+- on the Sylvseter equations property;
+- on frequency gain and phase response (by plotting Bode and/or Nyquist);
+- on the spectral zeros, positive spectral zeros;
+- on the Cholesky projector;
+- on the informations contained in `info_loep` (have a deeper look at these informations).
+- on the informations contained in `info_loeph` (have a deeper look at these informations, especially on the pH matrices)
+
+### Go even far away and measure the flexibility
+
+- Play with target order.
+- Change the original function and try replace with an irrational one such as $G(s)=\frac{1}{se^{-s}+1}.
+
+
 
