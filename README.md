@@ -71,12 +71,7 @@ Notice also that pathological cases may appear. A more advanced code, to deal wi
 
 ## Exercise \#1 
 
-Define the rational transfer function as a handle function 
-$$
-G(s) = \frac{s+1}{5+s}
-$$
-as 
-
+Define the rational transfer function $G(s) = \frac{s+1}{5+s}$ as a Matlab handle function 
 ```Matlab
 G = @(s) (s+1)/(s+5)
 ```
