@@ -67,7 +67,17 @@ Once again, this deposit consitutes a research code that accompany the paper men
 Notice also that pathological cases may appear. A more advanced code, to deal with practical and theoretical issues/limitations is currently under developpement by the authors.
 
 
-# Exercices suggestions
+# Exercises suggestions
 
 ## Exercise \#1 
+
+Define the rational transfer function as a handle function 
+$$
+G(s) = \frac{s+1}{5+s}
+$$
+as 
+
+```Matlab
+G = @(s) (s+1)/(s+5)
+```
 
