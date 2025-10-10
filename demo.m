@@ -11,9 +11,9 @@ mw  = 20; % markersize
 
 %%% Select example
 CAS = 'siso_simple';
-CAS = 'siso_passive_simple';
-CAS = 'mimo_rand';
-CAS = 'mimo_large';
+%CAS = 'siso_passive_simple';
+%CAS = 'mimo_rand';
+%CAS = 'mimo_large';
 [G,S,nu,ny] = lf.examples(CAS);
 
 %%% Data
@@ -79,9 +79,9 @@ legend({'Original' 'Loewner tangent' 'Loewner block'},'Interpreter','latex','loc
 
 w = logspace(-2,3,300);
 for i = 1:numel(w)
-    G_(1:ny,1:nu,i)     = G(w(i));
-    htng_(1:ny,1:nu,i)  = htng(w(i));
-    hblk_(1:ny,1:nu,i)  = hblk(w(i));
+    G_(1:ny,1:nu,i)     = G(1i*w(i));
+    htng_(1:ny,1:nu,i)  = htng(1i*w(i));
+    hblk_(1:ny,1:nu,i)  = hblk(1i*w(i));
 end
 
 figure, hold on, kk = 0;

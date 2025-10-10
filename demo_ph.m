@@ -71,10 +71,10 @@ legend({'Original' ['Loewner (\texttt{isPassive}:' num2str(isPassive(info_loe.Hr
 
 w = logspace(-2,3,1e4);
 for i = 1:numel(w)
-    G_(1:ny,1:nu,i)         = G(w(i));
-    hloe_(1:ny,1:nu,i)      = hloe(w(i));
-    hloep_(1:ny,1:nu,i)     = hloep(w(i));
-    hloeph_(1:ny,1:nu,i)    = hloeph(w(i));
+    G_(1:ny,1:nu,i)         = G(1i*w(i));
+    hloe_(1:ny,1:nu,i)      = hloe(1i*w(i));
+    hloep_(1:ny,1:nu,i)     = hloep(1i*w(i));
+    hloeph_(1:ny,1:nu,i)    = hloeph(1i*w(i));
 end
 
 figure, hold on, kk = 0;
