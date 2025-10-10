@@ -12,13 +12,15 @@ It is suited to approximate, from any data-set:
 
 ## Contribution (dis)claim
 
-The present page does not aim neither at describing this framework in details nor providing a novel contribution, but rather to provide elementary ingredients to test and teach the LF thanks to MATLAB codes and the package `+lf`. The latter includes the following features and function:
+The present page does not aim neither at describing this framework in details nor providing a novel contribution, but rather to provide elementary ingredients to test and teach the LF thanks to MATLAB codes and the package `+lf`. The latter includes the following features and functions:
 - approximate any SISO to MIMO data-set with a rational functions;
 - with controlled complexity; 
 - with passivity preservation;
 - and with port Hamiltonian realization.
 
-## Main reference (from author)
+The material contained in this package is mostly used to feel the LF and for education purpose. Additional features to deal with passivity and port-Hamiltonian  systems are also given.
+
+## Main reference (from the author)
 
 ```
 @article{GPVA:2022,
@@ -63,4 +65,9 @@ Please send any comment to C. Poussot-Vassal (charles.poussot-vassal@onera.fr) i
 Once again, this deposit consitutes a research code that accompany the paper mentionned above. It is not aimed to be included in any third party software without the consent of the authors. Authors decline responsabilities in case of problem when applying the code.
 
 Notice also that pathological cases may appear. A more advanced code, to deal with practical and theoretical issues/limitations is currently under developpement by the authors.
+
+
+# Exercices suggestions
+
+## Exercise \#1 
 
