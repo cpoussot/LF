@@ -198,7 +198,7 @@ Examinate the outputs of the passive rational approximant `hloep`, `info_loep` a
 ### Go even far away and measure the flexibility
 
 - Play with target order.
-- Change the original function and try replace with an irrational one such as $G(s)=\frac{1}{se^{-s}+1}.
+- Change the original function and try replace with an irrational one such as $G(s)=\frac{1}{se^{-s}+1}$.
 
 
 
