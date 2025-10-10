@@ -75,11 +75,12 @@ Define two toy rational transfer functions $G_1(s) = \frac{1}{2+s}$ and  $G_2(s)
 ```Matlab
 G1 = @(s) 1/(s+2);
 G2 = @(s) (s+1)/(s+5);
+G  = G1; % or G = G2;
 nu = 1;
 ny = 1;
 ```
 
-### Construct data
+### Construct data (interpolation points and its evaluation)
 
 Now, create 20 interpolation points, and split them in $\lambda$ and $\mu$, e.g.
 ```Matlab
@@ -88,7 +89,7 @@ la_ = si(1:2:end);
 mu_ = si(2:2:end);
 ```
 
-Now construct the data, being the evaluation of $G_1$ or $G_2$ at interpolation points $\lambda$'s and $mu$'s (for tangential direction being just ones, as the system is SISO).
+Now construct the data, being the evaluation of $G$ at interpolation points $\lambda$'s and $mu$'s (for tangential direction being just ones, as the system is SISO). 
 ```Matlab
 k   = length(la_);
 q   = length(mu_);
@@ -100,32 +101,33 @@ for ii = 1:q; V(1:ny,1:nu,ii) = G(mu_(ii)); end
 
 ### Construct the rational interpolant (apply Loewner tangential)
 
-Now you should run the tangential Loewner approximation with SVD threshold quite low, e.g. $10^{-12}$
+Now you may run the tangential Loewner approximation with an SVD threshold quite low, e.g. $10^{-12}$
 ```Matlab
 opt         = [];
 opt.target  = 1e-12;
 [htng,itng] = lf.loewner_tng(la_,mu_,W,V,R,L,opt);
 ```
 
-Examinate the outputs `htng` and `itng`, and conclude,
+Examinate the outputs `htng` and `itng`, and conclude for either $G_1$ and $G_2$,
 - on the approximation order and McMillan degree;
 - on the accuracy of the eigenvalues of the obtained model;
 - on the normalized singular values of the Loewner pencil;
 - on frequency gain and phase response (by plotting Bode and/or Nyquist);
+- on the Sylvseter equations property;
 - on the informations contained in `itng` (have a deeper look at these informations).
 
-## Exercise \#2: dig a bit more
+## Exercise \#2: dig a bit more...
 
 ### Construct data
 
-Now, create 20 interpolation points along the imaginary axis, and split them in $\lambda$ and $\mu$ (and close them by conjugation), e.g.
+Now, create interpolation points along the imaginary axis, and split them in $\lambda$ and $\mu$ (and close them by conjugation), e.g.
 ```Matlab
-nip = 100;
+nip = 10;
 la_ = (logspace(-2,2,nip))*1i;    la_ = sort([la_ conj(la_)]);
 mu_ = (logspace(-2,2,nip)+.1)*1i; mu_ = sort([mu_ conj(mu_)]);
 ```
 
-Construct the new data `W` and `V` as in previous exercise
+Construct the new data `W` and `V` as in Exercise \#1.
 
 ### Construct the rational interpolant (apply Loewner tangential)
 
@@ -137,12 +139,12 @@ opt.real    			= false;
 [htng_cplx,itng_cplx] 	= lf.loewner_tng(la_,mu_,W,V,R,L,opt);
 ```
 
-Examinate the outputs `htng_cplx` and `itng_cplx`, and conclude
+Examinate the outputs `htng_cplx` and `itng_cplx`, and conclude for either $G_1$ and $G_2$,
 - on the approximation order and McMillan degree;
 - on the accuracy of the eigenvalues of the obtained model;
 - on the normalized singular values of the Loewner pencil;
 - on frequency gain and phase response (by plotting Bode and/or Nyquist);
-- on the Sylvseter equation property;
+- on the Sylvseter equations property;
 - on the informations contained in `itng_cplx` (have a deeper look at these informations).
 
 Notice that the matrices and values are complex.
@@ -161,6 +163,7 @@ Examinate the outputs `htng_real` and `itng_real`, and conclude
 - on the approximation order and McMillan degree;
 - on the accuracy of the eigenvalues of the obtained model;
 - on the normalized singular values of the Loewner pencil;
+- on the Sylvseter equations property;
 - on frequency gain and phase response (by plotting Bode and/or Nyquist);
 - on the informations contained in `itng_real` (have a deeper look at these informations).
 
@@ -169,4 +172,5 @@ Notice that the matrices and values are now real.
 
 ## Exercise \#3: about passive models and pH systems
 
+### Construct the real rational interpolant (apply Loewner tangential)
 
