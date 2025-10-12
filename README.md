@@ -209,7 +209,7 @@ E\dot{\mathbf{x}}(t) &=& A{\mathbf{x}}(t)+Bu(t)\\
 y(t) &=& C{\mathbf{x}}(t)
 \end{array}
 ```
-where, ($x$ is the position and $\dot x$ the velocity)
+where ($x$ is the position and $\dot x$ the velocity of the mass),
 ```math
 {\mathbf{x}} = \left(\begin{array}{c} x\\ \dot x \end{array}\right)  ,\,
 E = I_2 ,\, 
@@ -236,9 +236,11 @@ P = \left(\begin{array}{c} 0\\ 0 \end{array}\right) ,\,
 N = S = 0
 ```
 
+We want to recover thus a structure on the basis of data only, using the LF.
 
-### Define a state-space model of the MSD
+### Define a state-space model of the MSD and analyze it
 
+Let start by defining the state-space model. 
 ```Matlab
 % MSD parameters
 m 	= 10; % mass
@@ -257,14 +259,66 @@ D   = 0;
 Hss = dss(A,B,C,D,E);
 hss = @(s) C*((s*E-A)\B) + D;
 ```
+Compute eigenvalues, zeros and spectral zeros.
+```Matlab
+eigS        = eig(A,E);
+zerS        = eig([A B; C D],blkdiag(E,zeros(ny,nu)));
+[SZ_v,SZ]   = lf.spectral_zeros(Hss);
+```
 
 ### Apply LF 
 
+Use LF to compute an approximant with the following features
+- use complex conjugated IP 
+- target a minimal order recivering the exact model order
+- target real valued matrices 
+
+### Apply LF with passivity preservation
+
+Now enforce passivity. As there is a $D$ term equal to zero, the theorem derived in the slides (Benner et al. 2021) are no longer satisfied, use the numerical trick proposed in (Poussot-Vassal aet al. 2023). And recover the pH structure:
+```Matlab
+opt.Ds              = ds;
+[hloep,info_loep]   = lf.loewner_passive(la,mu,W,V,R,L,D,opt);
+[hloeph,info_loeph] = lf.passive2ph(info_loep.Hr);
+```
 
 ### Go to the time-domain simulations
 
+Compute the projectors to recover the very same states
+```Matlab
+H   = Hss; % original model (if known)
+Hr  = info_loep.Hrn;
+X   = info_loep.X;
+Y   = info_loep.Y;
+J   = info_loep.J;
+Rj  = info_loep.R;
+Li  = info_loep.L;
+la  = info_loep.la;
+mu  = info_loep.mu;
+isstable(Hr)
+[Vproj,Wproj,Vproj_x0] = lf.projectors(H,Hr,J,X,Y,la,mu,Rj,Li,'svd');
+Vproj       = Vproj*info_loep.Vchol;
+```
+Now, simulate in the time-domain using an exciting signal $u$ signal, e.g.
+```Matlab
+f           = .01;
+dt          = .01;
+t           = 0:dt:20;
+u           = (sin(2*pi*f*t.^3))';
+```
+both full original 
+```Matlab
+x0          = zeros(length(H.A),1);
+[yy,tt,xx]  = lsim(H,u,t,x0);
+```
+and pH-ROM as 
+```Matlab
+x0r         = Vproj_x0*x0;
+[yr,~,xr]   = lsim(Hr,u,t,x0r);
+xrp         = (Vproj*xr.')';
+```
 
-
+Compare output and states trajectories, and conclude.
 
 ## Exercise \#5: go far away and measure the flexibility of LF 
 
