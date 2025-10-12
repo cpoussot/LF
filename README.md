@@ -217,13 +217,25 @@ A = \left(\begin{array}{cc} 0 & 1\\ -\frac{k}{m} & -\frac{b}{m} \end{array}\righ
 B = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right)  ,\,
 C = \left(\begin{array}{cc} 0 & 1 \end{array}\right)
 ```
-Notice that this model is passive. Now remark tht ait admits a pH form with this form,
+Notice that this model is passive. Now remark that it admits a pH form with this form,
 ```math
 \begin{array}{rcl}
 M\dot{\mathbf{x}}(t)&=&(J-R)Q{\mathbf{x}}(t)+(G-P)u(t) \\
 y(t)&=&(G+P)^\top Q{\mathbf{x}}(t)+(N+S)u(t)
 \end{array}
 ```
+where, 
+```math
+{\mathbf{x}} = \left(\begin{array}{c} \alpha_x\\ \alpha_v \end{array}\right)  ,\,
+M = I_2 ,\, 
+J = \left(\begin{array}{cc} 0 & \frac{1}{m}\\ -\frac{1}{m} & 0 \end{array}\right) ,\,
+R = \left(\begin{array}{cc} 0 & 0\\ 0 & \frac{b}{m^2} \end{array}\right) ,\,
+Q = \left(\begin{array}{cc} k & 0\\ 0 & m \end{array}\right) ,\,
+G = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right) ,\,
+P = \left(\begin{array}{c} 0\\ 0 \end{array}\right) ,\,
+N = S = 0
+```
+
 
 ### Define a state-space model of the MSD
 
