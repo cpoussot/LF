@@ -201,12 +201,12 @@ Examinate the outputs of the passive rational approximant `hloep`, `info_loep` a
 ## Exercise \#4: simple mass-spring-damper example
 
 Now use the example suggested in the Part 3 of the slides. The MSD is given the following equation
-$$
+```math
 \begin{array}{rcl}
 E\dot x(t) &=& Ax(t)+Bu(t)\\
 y(t) &=& Cx(t)
 \end{array}
-$$
+```
 
 
 ### Define a state-space model of the MSD
