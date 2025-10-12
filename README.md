@@ -73,7 +73,7 @@ The three following exercises are set up to discover the LF and some of its feat
 
 ## Exercise \#1: first try with Loewner
 
-Define two toy rational transfer functions $G_1(s) = \frac{1}{2+s}$ and  $G_2(s) = \frac{s+1}{5+s}$ as a Matlab handle functions.
+Define two toy rational transfer functions $G_1(s) = \frac{1}{2+s}$ and  $G_2(s) = \frac{s+1}{s+5}$ as a Matlab handle functions.
 ```Matlab
 G1 = @(s) 1/(s+2);
 G2 = @(s) (s+1)/(s+5);
@@ -91,7 +91,7 @@ la_ = si(1:2:end);
 mu_ = si(2:2:end);
 ```
 
-Now construct the data, being the evaluation of $G$ at interpolation points $\lambda$'s and $mu$'s (for tangential direction being just ones, as the system is SISO). 
+Now construct the data, being the evaluation of $G$ at interpolation points $\lambda$'s and $\mu$'s (for tangential direction being just ones, as the system is SISO). 
 ```Matlab
 k   = length(la_);
 q   = length(mu_);
@@ -103,7 +103,7 @@ for ii = 1:q; V(1:ny,1:nu,ii) = G(mu_(ii)); end
 
 ### Construct the rational interpolant (apply Loewner tangential)
 
-Now you may run the tangential Loewner approximation with an SVD threshold quite low, e.g. $10^{-12}$
+Now you may run the tangential Loewner approximation with an SVD threshold quite low, e.g. a rolerance of $10^{-12}$.
 ```Matlab
 opt         = [];
 opt.target  = 1e-12;
@@ -111,7 +111,7 @@ opt.target  = 1e-12;
 ```
 
 Examinate the outputs `htng` and `itng`, and conclude for either $G_1$ and $G_2$,
-- on the approximation order and McMillan degree;
+- on the approximation order $r$ and McMillan degree $\nu$;
 - on the accuracy of the eigenvalues of the obtained model;
 - on the normalized singular values of the Loewner pencil;
 - on frequency gain and phase response (by plotting Bode and/or Nyquist);
@@ -125,11 +125,13 @@ Examinate the outputs `htng` and `itng`, and conclude for either $G_1$ and $G_2$
 Now, create interpolation points along the imaginary axis, and split them in $\lambda$ and $\mu$ (and close them by conjugation), e.g.
 ```Matlab
 nip = 10;
-la_ = (logspace(-2,2,nip))*1i;    la_ = sort([la_ conj(la_)]);
-mu_ = (logspace(-2,2,nip)+.1)*1i; mu_ = sort([mu_ conj(mu_)]);
+la_ = (logspace(-2,2,nip))*1i;    
+la_ = sort([la_ conj(la_)]);
+mu_ = (logspace(-2,2,nip)+.1)*1i; 
+mu_ = sort([mu_ conj(mu_)]);
 ```
 
-Construct the new data `W` and `V` as in Exercise \#1.
+Construct the new data `W` and `V` just as in Exercise \#1.
 
 ### Construct the rational interpolant (apply Loewner tangential)
 
@@ -142,14 +144,14 @@ opt.real    			= false;
 ```
 
 Examinate the outputs `htng_cplx` and `itng_cplx`, and conclude for either $G_1$ and $G_2$,
-- on the approximation order and McMillan degree;
+- on the approximation order $r$ and McMillan degree $\nu$;
 - on the accuracy of the eigenvalues of the obtained model;
 - on the normalized singular values of the Loewner pencil;
 - on frequency gain and phase response (by plotting Bode and/or Nyquist);
 - on the Sylvseter equations property;
 - on the informations contained in `itng_cplx` (have a deeper look at these informations).
 
-Notice that the matrices and values are complex.
+Notice that the matrices and values are all complex.
 
 ### Construct the real rational interpolant (apply Loewner tangential)
 
@@ -162,7 +164,7 @@ opt.real    			= true;
 ```
 
 Examinate the outputs `htng_real` and `itng_real`, and conclude
-- on the approximation order and McMillan degree;
+- on the approximation order $r$ and McMillan degree $\nu$;
 - on the accuracy of the eigenvalues of the obtained model;
 - on the normalized singular values of the Loewner pencil;
 - on the Sylvseter equations property;
@@ -172,20 +174,20 @@ Examinate the outputs `htng_real` and `itng_real`, and conclude
 Notice that the matrices and values are now real.
 
 
-## Exercise \#3: about reduction, passive models and pH systems
+## Exercise \#3: about reduction, passive models and pH structures
 
-### Run the demo file
+### Run the demo file `demo_ph.m`
 
 Now we suggest to try the script `demo_ph.m`. The latter uses the very same LF but with an additional step to ensure passivity and port Hamiltonian structre. Please spend some time to test the different models proposed
 ```Matlab
-CAS = 'siso_passive_simple'; r = 1e-12
-CAS = 'siso_passive_aca'; r = 1e-12
+CAS = 'siso_passive_simple';   r = 1e-12
+CAS = 'siso_passive_aca';      r = 1e-12
 CAS = 'siso_passive_gugercin'; r = 5
-CAS = 'mimo_passive_aca'; r = 5
+CAS = 'mimo_passive_aca';      r = 5
 ```
 
 Examinate the outputs of the passive rational approximant `hloep`, `info_loep` and `info_loeph`, and conclude
-- on the approximation order and McMillan degree;
+- on the approximation order $r$ and McMillan degree $\nu$;
 - on the accuracy of the eigenvalues of the obtained model;
 - on the normalized singular values of the Loewner pencil;
 - on the Sylvseter equations property;
@@ -195,7 +197,48 @@ Examinate the outputs of the passive rational approximant `hloep`, `info_loep` a
 - on the informations contained in `info_loep` (have a deeper look at these informations).
 - on the informations contained in `info_loeph` (have a deeper look at these informations, especially on the pH matrices)
 
-### Go even far away and measure the flexibility
+
+## Exercise \#4: simple mass-spring-damper example
+
+Now use the example suggested in the Part 3 of the slides. The MSD is given the following equation
+$$
+\begin{array}{rcl}
+E\dot x(t) &=& Ax(t)+Bu(t)\\
+y(t) &=& Cx(t)
+\end{array}
+$$
+
+
+### Define a state-space model of the MSD
+
+```Matlab
+% MSD parameters
+m 	= 10; % mass
+k 	= 1;  % spring
+b 	= 3;  % damper
+% System properties
+n   = 2;
+ny  = 1;
+nu  = ny;
+% State-space X=[x dx]
+E   = eye(n);
+A   = [0 1; -k/m -b/m];
+B   = [0; 1/m];
+C   = [0 1];
+D   = 0;
+Hss = dss(A,B,C,D,E);
+hss = @(s) C*((s*E-A)\B) + D;
+```
+
+### Apply LF 
+
+
+### Go to the time-domain simulations
+
+
+
+
+## Exercise \#5: go far away and measure the flexibility of LF 
 
 - Play with target order.
 - Change the original function and try replace with an irrational one such as $G(s)=\frac{1}{se^{-s}+1}$.
