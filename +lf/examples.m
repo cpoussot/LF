@@ -1,7 +1,12 @@
 function [G,S,nu,ny,eigS] = examples(CAS)
 
 switch CAS
-    case 'siso_simple' % Very simple
+    case 'siso_vsimple' % Very simple
+        ny  = 1;
+        nu  = 1;
+        S   = ss(tf([1 1],[1 5]));
+        S.E = eye(length(S.A));
+    case 'siso_simple' % simple
         ny  = 1;
         nu  = 1;
         S   = ss(tf(1,[1 0.01 1]));
