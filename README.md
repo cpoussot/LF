@@ -207,6 +207,14 @@ E\dot x(t) &=& Ax(t)+Bu(t)\\
 y(t) &=& Cx(t)
 \end{array}
 ```
+where
+```math
+E = I_2 ,\, 
+A = \left(\begin{array}{cc} 0 & 1\\ -\frac{k}{m} & -\frac{b}{m} \end{array}\right) ,\,
+B = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right)  ,\,
+C = \left(\begin{array}{cc} 0 & 1 \end{array}\right)
+```
+
 
 
 ### Define a state-space model of the MSD
