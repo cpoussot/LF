@@ -43,7 +43,7 @@
 %    * V,W  : tangential input and output matrices (q x nu & ny x k, complex)
 %    * D    : D-term (ny x nu, complex)
 %    * H    : full Loewner form (handle function)
-%               H(s)=W(-s SS+LL)\V+D
+%               H(s)=W(-s LL+SS)\V+D
 %    * X,Y  : left and right projectors (k x r & q x r, complex)
 %    * Rr,Lr: right and left tangential directions  (nu x r & r x ny, complex)
 %    * Hr   : compressed Loewner form (state-space, complex)

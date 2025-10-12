@@ -1,3 +1,85 @@
+% Loewner algorithm (tangential passive version)
+% Author: C. Poussot-Vassal [MOR Digital Systems & ONERA]
+% 
+% Syntax
+% [hr,info] = lf.loewner_passive(la,mu,W,V,R,L,D,opt)
+%  
+% Input arguments
+%  - la : interpolation points (k x 1, complex)
+%  - mu : interpolation points (q x 1, complex)
+%  - W  : k-dimensional ny x nu structure of the function/data 
+%         evaluated at points "la" (ny x nu x k, complex)
+%         W = H(la), where H(.) is the underlying model
+%  - V  : q-dimensional ny x nu structure of the function/data  
+%         evaluated at points "mu" (ny x nu x q, complex)
+%         V = H(mu), where H(.) is the underlying model
+%  - R  : right tangential directions (ny x k, complex)
+%  - L  : left tangential directions (q x nu, complex)
+%  - D  : H(infty) value (ny x nu, complex)
+%  - opt: optional arguments
+%    * target: rational order (if integer >=1), 
+%              SVD tolerance (if real <1)
+%              automatic (if Inf or [])
+%    * D     : D-term (ny x nu, complex)
+%              /!\ use with discretion
+%    * real  : boolean to try (if possible) real realization 
+% 
+% Output arguments
+%  - hr   : approximation model (handle function)
+%  - info : structure with informations about the Loewner world
+%    * r    : rational order (integer)
+%    * nu   : McMilan degree (integer)
+%    * isCC : is complex conjugated (boolean)
+%             if true, most of the matrices are converted to real
+%    * J    : complex to real transformation matrix (k x q, complex)
+%    * la   : lambda's column interpolation points (k x 1, complex)
+%    * mu   : mu's row interpolation points (q x 1, complex)
+%    * sv   : normalized singular values of [LL SS] (min(q,k), real)
+%    * sv_nu: normalized singular values of LL (min(q,k), real)
+%    * LL   : Loewner matrix (q x k, complex)
+%    * SS   : shifted Loewner matrix (q x k, complex)
+%    * LA   : Lambda matrix (k x k, complex)
+%    * MU   : Mu matrix (q x q, complex)
+%    * L,R  : left, right tangential data (data x tangent directions)
+%    * V,W  : tangential input and output matrices (q x nu & ny x k, complex)
+%    * D    : D-term (ny x nu, complex)
+%    * H    : full Loewner form (handle function)
+%               H(s)=W(-s LL+SS)\V+D
+%    * X,Y  : left and right projectors (k x r & q x r, complex)
+%    * Rr,Lr: right and left tangential directions  (nu x r & r x ny, complex)
+%    * Hr   : compressed Loewner form (state-space, complex)
+%               Hr(s)=Cr(sEr-Ar)\Br+Dr, 
+%             where (Er,Ar,Br,Cr,Dr) are available in info.Er ...
+%    * lat  : compressed column (right) interpolation points (r x 1, complex)
+%    * mut  : compressed row (left) interpolation points (r x 1, complex)
+%    * ... Others not documented yet
+%    * sz_R     : spectral zeros directions
+%    * sz_R_pos : spectral zeros directions positive
+%    * sz_la    : spectral zeros 
+%    * sz_la_pos: spectral zeros positive
+%    * Vchol    : Cholesky decomposition of LL
+%    * chol_flag: Cholesky decomposition flag
+%    * Hrn      : normalized passive model
+% 
+% Note 
+% Sylvester equations 
+%    MU*LL-LL*LA = V*R-L*W 
+%    MU*SS-SS*LA = MU*V*R-L*W*LA
+% may be checked for complex form only, i.e.
+% if ~info.isCC
+%   test1 = info.MU*info.LL - info.LL*info.LA;
+%   test2 = info.V*info.R - info.L*info.W;
+%   norm(test1-test2) % small
+%   test1 = info.MU*info.SS - info.SS*info.LA;
+%   test2 = info.MU*info.V*info.R - info.L*info.W*info.LA;
+%   norm(test1-test2) % small
+% end
+% 
+% Description
+% Loewner rules.
+%
+
+
 function [hrp,info] = loewner_passive(la_,mu_,W_,V_,R,L,D,opt)
 
 tol_sz  = 1e-10;
