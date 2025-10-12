@@ -69,7 +69,7 @@ Notice also that pathological cases may appear. A more advanced code, to deal wi
 
 # Exercises suggestions
 
-The three following exercises are set up to discover the LF and some of its features. It can be used to discover step by step how to set up and solve the interpolation problem.
+The following exercises are set up to discover the LF and some of its features. It can be used to discover step by step how to set up and solve the interpolation problem.
 
 ## Exercise \#1: first try with Loewner
 
@@ -91,7 +91,7 @@ la_ = si(1:2:end);
 mu_ = si(2:2:end);
 ```
 
-Now construct the data, being the evaluation of $G$ at interpolation points $\lambda$'s and $\mu$'s (for tangential direction being just ones, as the system is SISO). 
+Now construct the data, being the evaluation of $G$ at interpolation points $\lambda$'s and $\mu$'s (tangential directions are just set to one as the system is SISO). 
 ```Matlab
 k   = length(la_);
 q   = length(mu_);
@@ -110,7 +110,7 @@ opt.target  = 1e-12;
 [htng,itng] = lf.loewner_tng(la_,mu_,W,V,R,L,opt);
 ```
 
-Examinate the outputs `htng` and `itng`, and conclude for either $G_1$ and $G_2$,
+Examinate the outputs `htng` and `itng`, and conclude for either $G_1$ or $G_2$,
 - on the approximation order $r$ and McMillan degree $\nu$;
 - on the accuracy of the eigenvalues of the obtained model;
 - on the normalized singular values of the Loewner pencil;
@@ -143,7 +143,7 @@ opt.real    			= false;
 [htng_cplx,itng_cplx] 	= lf.loewner_tng(la_,mu_,W,V,R,L,opt);
 ```
 
-Examinate the outputs `htng_cplx` and `itng_cplx`, and conclude for either $G_1$ and $G_2$,
+Examinate the outputs `htng_cplx` and `itng_cplx`, and conclude for either $G_1$ or $G_2$,
 - on the approximation order $r$ and McMillan degree $\nu$;
 - on the accuracy of the eigenvalues of the obtained model;
 - on the normalized singular values of the Loewner pencil;
@@ -178,7 +178,7 @@ Notice that the matrices and values are now real.
 
 ### Run the demo file `demo_ph.m`
 
-Now we suggest to try the script `demo_ph.m`. The latter uses the very same LF but with an additional step to ensure passivity and port Hamiltonian structre. Please spend some time to test the different models proposed
+Now we suggest to try the script `demo_ph.m`. The latter uses the very same LF but with an additional step to ensure passivity and port Hamiltonian structre. Please spend some time to test the different models proposed (or at least one).
 ```Matlab
 CAS = 'siso_passive_simple';   r = 1e-12
 CAS = 'siso_passive_aca';      r = 1e-12
@@ -236,7 +236,7 @@ P = \left(\begin{array}{c} 0\\ 0 \end{array}\right) ,\,
 N = S = 0
 ```
 
-We want to recover thus a structure on the basis of data only, using the LF.
+We want to recover such a structure on the basis of data only, using the LF.
 
 ### Define a state-space model of the MSD and analyze it
 
@@ -269,22 +269,24 @@ zerS        = eig([A B; C D],blkdiag(E,zeros(ny,nu)));
 ### Apply LF 
 
 Use LF to compute an approximant with the following features
-- use complex conjugated IP 
-- target a minimal order recivering the exact model order
-- target real valued matrices 
+- use complex conjugated IP ;
+- target a minimal order recovering the exact model order;
+- target real valued matrices ;
 
 ### Apply LF with passivity preservation
 
-Now enforce passivity. As there is a $D$ term equal to zero, the theorem derived in the slides (Benner et al. 2021) are no longer satisfied, use the numerical trick proposed in (Poussot-Vassal aet al. 2023). And recover the pH structure:
+Now enforce passivity. As there is a $D$ term is equal to zero, the theorem derived in the slides (Benner et al. 2021) are no longer satisfied, use the numerical trick proposed in (Poussot-Vassal aet al. 2023). And recover the pH structure:
 ```Matlab
-opt.Ds              = ds;
+opt.Ds              = 1e-2;
 [hloep,info_loep]   = lf.loewner_passive(la,mu,W,V,R,L,D,opt);
 [hloeph,info_loeph] = lf.passive2ph(info_loep.Hr);
 ```
 
+Analyse the outputs, evaluate the eigenvalues, zeros, and spectral zeros...
+
 ### Go to the time-domain simulations
 
-Compute the projectors to recover the very same states
+Compute the projectors to recover the very same states variables.
 ```Matlab
 H   = Hss; % original model (if known)
 Hr  = info_loep.Hrn;
@@ -295,9 +297,8 @@ Rj  = info_loep.R;
 Li  = info_loep.L;
 la  = info_loep.la;
 mu  = info_loep.mu;
-isstable(Hr)
 [Vproj,Wproj,Vproj_x0] = lf.projectors(H,Hr,J,X,Y,la,mu,Rj,Li,'svd');
-Vproj       = Vproj*info_loep.Vchol;
+Vproj       		   = Vproj*info_loep.Vchol;
 ```
 Now, simulate in the time-domain using an exciting signal $u$ signal, e.g.
 ```Matlab
@@ -318,12 +319,13 @@ x0r         = Vproj_x0*x0;
 xrp         = (Vproj*xr.')';
 ```
 
-Compare output and states trajectories, and conclude.
+Plot and compare outputs and states trajectories of the original and identified pH models, and conclude.
 
 ## Exercise \#5: go far away and measure the flexibility of LF 
 
 - Play with target order.
 - Change the original function and try replace with an irrational one such as $G(s)=\frac{1}{se^{-s}+1}$.
+- Enjoy!
 
 
 
