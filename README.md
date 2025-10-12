@@ -198,24 +198,32 @@ Examinate the outputs of the passive rational approximant `hloep`, `info_loep` a
 - on the informations contained in `info_loeph` (have a deeper look at these informations, especially on the pH matrices)
 
 
-## Exercise \#4: simple mass-spring-damper example
+## Exercise \#4: simple mass-spring-damper example (for passive and pH)
 
-Now use the example suggested in the Part 3 of the slides. The MSD is given the following equation
+### Introduction
+
+Now use the example suggested in the Part 3 of the slides. The MSD is given the by following state-space equation,
 ```math
 \begin{array}{rcl}
-E\dot x(t) &=& Ax(t)+Bu(t)\\
-y(t) &=& Cx(t)
+E\dot{\mathbf{x}}(t) &=& A{\mathbf{x}}(t)+Bu(t)\\
+y(t) &=& C{\mathbf{x}}(t)
 \end{array}
 ```
-where
+where, ($x$ is the position and $\dot x$ the velocity)
 ```math
+{\mathbf{x}} = \left(\begin{array}{c} x\\ \dot x \end{array}\right)  ,\,
 E = I_2 ,\, 
 A = \left(\begin{array}{cc} 0 & 1\\ -\frac{k}{m} & -\frac{b}{m} \end{array}\right) ,\,
 B = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right)  ,\,
 C = \left(\begin{array}{cc} 0 & 1 \end{array}\right)
 ```
-
-
+Notice that this model is passive. Now remark tht ait admits a pH form with this form,
+```math
+\begin{array}{rcl}
+M\dot{\mathbf{x}}(t)&=&(J-R)Q{\mathbf{x}}(t)+(G-P)u(t) \\
+y(t)&=&(G+P)^\top Q{\mathbf{x}}(t)+(N+S)u(t)
+\end{array}
+```
 
 ### Define a state-space model of the MSD
 
