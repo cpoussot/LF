@@ -274,13 +274,13 @@ zerS        = eig([A B; C D],blkdiag(E,zeros(ny,nu)));
 ### Apply LF 
 
 Use LF to compute an approximant with the following features
-- use complex conjugated IP ;
+- use complex conjugated IP;
 - target a minimal order recovering the exact model order;
-- target real valued matrices ;
+- target real valued matrices;
 
 ### Apply LF with passivity preservation
 
-Now enforce passivity. As there is a $D$ term is equal to zero, the theorem derived in the slides (Benner et al. 2021) are no longer satisfied, use the numerical trick proposed in (Poussot-Vassal aet al. 2023). And recover the pH structure:
+Now enforce passivity. As there is a $D$ term is equal to zero, the theorem derived in the slides (Benner et al. 2021) are no longer satisfied, use the numerical trick proposed in (Poussot-Vassal et al. 2023). And recover the pH structure:
 ```Matlab
 opt.Ds              = 1e-2;
 [hloep,info_loep]   = lf.loewner_passive(la,mu,W,V,R,L,D,opt);
