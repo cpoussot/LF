@@ -11,6 +11,13 @@ switch CAS
         nu  = 1;
         S   = ss(tf(1,[1 0.01 1]));
         S.E = eye(length(S.A));
+    case 'siso_rand'
+        rng(1234)
+        ny  = 1;
+        nu  = 1;
+        S   = rss(100,ny,nu);
+        S.E = eye(length(S.A));
+        S.D = zeros(ny,nu);
     case 'mimo_rand'
         ny  = 4;
         nu  = 3;
