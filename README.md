@@ -26,7 +26,7 @@ The material contained in this package is mostly used to feel the LF and for edu
 @article{GPVA:2022,
 	Author	= {I.V. Gosea and C. Poussot-Vassal and A.C. Antoulas},
 	Doi 	= {10.1016/bs.hna.2021.12.015},
-	Journal = {Handbook in Numerical Analysis, Vol. 23, January 2022, pp. 499-530},
+	Journal = {Handbook in Numerical Analysis},
 	Number 	= {},
 	Pages 	= {499-530},
 	Title 	= {{Data-driven modeling and control of large-scale dynamical systems in the Loewner framework}},
@@ -39,7 +39,7 @@ The material contained in this package is mostly used to feel the LF and for edu
 
 # The "LF" MATLAB package 
 
-The code (`+lf` folder)  provided in this GitHub page is given for open science purpose. Its principal objective is to accompany the the reasers, and thus aims at being as educative as possible rather than industry-oriented. Evolutions (numerical improvements) may come with time. Please, cite the reference above if used in your work and do not hesitate to contact us in case of bug of problem when using it. Below we present an example of use, then functions list are given.
+The code (`+lf` folder)  provided in this GitHub page is given for open science purpose. Its principal objective is to accompany the the readers, and thus aims at being as educative as possible rather than industry-oriented. Evolutions (numerical improvements) may come with time. Please, cite the reference above if used in your work and do not hesitate to contact us in case of bug of problem when using it. Below we present an example of use, then functions list are given.
 
 ## A simple MATLAB code example
 
