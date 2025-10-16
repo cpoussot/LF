@@ -293,34 +293,31 @@ Analyse the outputs, evaluate the eigenvalues, zeros, and spectral zeros...
 
 Compute the projectors to recover the very same states variables.
 ```Matlab
-H   = Hss; % original model (if known)
-Hr  = info_loep.Hrn;
-X   = info_loep.X;
-Y   = info_loep.Y;
-J   = info_loep.J;
-Rj  = info_loep.R;
-Li  = info_loep.L;
-la  = info_loep.la;
-mu  = info_loep.mu;
-[Vproj,Wproj,Vproj_x0] = lf.projectors(H,Hr,J,X,Y,la,mu,Rj,Li,'svd');
-Vproj       		   = Vproj*info_loep.Vchol;
+% >> Projector
+[Vproj,Wproj,Vproj_x0]  = lf.projectors(S,info_loep,'none');
 ```
 Now, simulate in the time-domain using an exciting signal $u$ signal, e.g.
 ```Matlab
+% >> t, u, x0
 f           = .01;
 dt          = .01;
 t           = 0:dt:20;
-u           = (sin(2*pi*f*t.^3))';
+u           = @(t) (sin(2*pi*f*t.^3).*exp(-.1.*t))';
+uu          = u(t);
+x0          = zeros(length(S.A),1);
 ```
 both full original 
 ```Matlab
-x0          = zeros(length(H.A),1);
-[yy,tt,xx]  = lsim(H,u,t,x0);
+% >> Original
+[tt,xx]     = ode45(@(t,x) mdlph.dx(t,x,u(t)), t, x0);
+yy          = mdlph.y(xx.',uu.');
 ```
 and pH-ROM as 
 ```Matlab
+% >> Identified and lift
 x0r         = Vproj_x0*x0;
-[yr,~,xr]   = lsim(Hr,u,t,x0r);
+[tt,xr]     = ode45(@(t,x) info_loeph.dx(t,x,u(t)), tt, x0r);
+yr          = info_loeph.y(xr.',uu.');
 xrp         = (Vproj*xr.')';
 ```
 

@@ -1,4 +1,4 @@
-function [G,S,nu,ny,eigS,ph] = examples(CAS)
+function [G,S,nu,ny,ph] = examples(CAS)
 
 ph = [];
 switch CAS
@@ -66,7 +66,7 @@ switch CAS
         S   = dss(A,B,C,D,E);
     case 'msd'
         m = 10; b = 3; k = 1;
-        m = 1; b = 1; k = 1;
+        %m = 1; b = 1; k = 1;
         %
         n   = 2;
         ny  = 1;
@@ -88,6 +88,8 @@ switch CAS
         ph.N    = 0;
         ph.S    = 0;
         ph.h    = @(s) ((ph.G+ph.P).'*ph.Q)*((s*In-(ph.J-ph.R)*ph.Q)\(ph.G-ph.P))+(ph.N+ph.S);
+        ph.dx   = @(t,x,u) ((ph.J-ph.R)*ph.Q)*x + (ph.G-ph.P)*u;
+        ph.y    = @(x,u) ((ph.G+ph.P).'*ph.Q)*x + (ph.N+ph.S)*u;
 end
 %
 eigS        = eig(S);

@@ -11,12 +11,12 @@ mw  = 20; % markersize
 
 %%% Select example
 %CAS = 'siso_passive_simple'; r = 1e-12; ds = 0;
-CAS = 'siso_passive_aca'; r = 1e-12; ds = 0;
+%CAS = 'siso_passive_aca'; r = 1e-12; ds = 0;
 %CAS = 'siso_passive_gugercin'; r = 5; ds = 0;
 %CAS = 'mimo_passive_aca'; r = 5; ds = 0
-%CAS = 'msd'; r = 1e-12; ds=.1;
-[G,S,nu,ny,ph]  = lf.examples(CAS);
-[SZ_v,SZ,~,~]   = lf.spectral_zeros(S);
+CAS = 'msd'; r = 1e-12; ds=.1;
+[G,S,nu,ny,mdlph]   = lf.examples(CAS);
+[SZ_v,SZ,~,~]       = lf.spectral_zeros(S);
 
 %%% Data
 nip     = 100;
@@ -96,40 +96,81 @@ legend({'Original' ...
        'pH Loewner'},'location','best')
 
 info_loeph
-
+%%
 %%% Time-domain simulation
-% >> Projector
-out     = 1;
-in      = 1;
-Hr      = info_loep.Hrn;
-[Vproj,Wproj,Vproj_x0]  = lf.projectors(S,info_loep,'none');
-% >> t, u, x0
-f           = .01;
-dt          = .01;
-t           = 0:dt:20;
-u           = (sin(2*pi*f*t.^3).*exp(-.1.*t))';
-x0          = zeros(length(S.A),1);
-% >> Original
-[yy,tt,xx]  = lsim(S(out,in),u,t,x0);
-x0r         = Vproj_x0*x0;
-% >> Identified and lift
-[yr,~,xr]   = lsim(Hr(out,in),u,t,x0r);
-xrp         = (Vproj*xr.')';
-% >> Compare 
-figure, 
-subplot(211), hold on
-plot(tt,yy,'-','LineWidth',lw,'DisplayName','Original'), grid on
-plot(tt,yr,'--','LineWidth',lw,'DisplayName','pH-ROM')
-Lgnd = legend('show');
-xlabel('$t$'), ylabel('Output'),% set(gca,'XScale','log')
-subplot(212), hold on
-h1=plot(tt,xx,'-','LineWidth',lw); grid on
-h2=plot(tt,xr,'m:','LineWidth',lw);
-h3=plot(tt,xrp,'k--','LineWidth',lw);
-leg = legend([h1(1), h2(1), h3(1)], ... 
-             'Original',...
-             'pH-ROM', ...
-             'pH-ROM (lifted)');
-set(leg, 'interpreter','latex')
-xlabel('$t$'), ylabel('Internal variables'),% set(gca,'XScale','log')
-
+if ~isempty(mdlph)
+    % >> Projector
+    [Vproj,Wproj,Vproj_x0]  = lf.projectors(S,info_loep,'none');
+    % >> t, u, x0
+    f           = .01;
+    dt          = .01;
+    t           = 0:dt:20;
+    u           = @(t) (sin(2*pi*f*t.^3).*exp(-.1.*t))';
+    uu          = u(t);
+    x0          = zeros(length(S.A),1);
+    % >> Original
+    [tt,xx]     = ode45(@(t,x) mdlph.dx(t,x,u(t)), t, x0);
+    yy          = mdlph.y(xx.',uu.');
+    % >> Identified and lift
+    x0r         = Vproj_x0*x0;
+    [tt,xr]     = ode45(@(t,x) info_loeph.dx(t,x,u(t)), tt, x0r);
+    yr          = info_loeph.y(xr.',uu.');
+    xrp         = (Vproj*xr.')';
+    
+    %[yy,tt,xx]  = lsim(S(out,in),uu,t,x0);
+    %[yr,~,xr]   = lsim(info_loep.Hrn(out,in),uu,t,x0r);
+    
+    % >> Compare output and states
+    figure, 
+    subplot(211), hold on
+    plot(tt,yy,'-','LineWidth',lw,'DisplayName','Original'), grid on
+    plot(tt,yr,'--','LineWidth',lw,'DisplayName','pH-ROM')
+    Lgnd = legend('show');
+    xlabel('$t$'), ylabel('Output'),% set(gca,'XScale','log')
+    subplot(212), hold on
+    h1=plot(tt,xx,'-','LineWidth',lw); grid on
+    h2=plot(tt,xr,'m:','LineWidth',lw);
+    h3=plot(tt,xrp,'k--','LineWidth',lw);
+    leg = legend([h1(1), h2(1), h3(1)], ... 
+                 'Original',...
+                 'pH-ROM', ...
+                 'pH-ROM (lifted)');
+    set(leg, 'interpreter','latex')
+    xlabel('$t$'), ylabel('Internal variables'),% set(gca,'XScale','log')
+    %
+    ord     = length(info_loeph.J);
+    SCALE   = (info_loeph.J-info_loeph.R);
+    for ii = 1:numel(tt)
+        % FOM
+        Hfom(ii)    = 1/ord*xx(ii,:)*(xx(ii,:))';
+        Efom(ii)    = u(ii)*(yy(ii))';
+        Dfom(ii)    = 1/ord*xx(ii,:)*(mdlph.J - mdlph.R)*(xx(ii,:))';
+        % ROM
+        Hrom(ii)    = 1/ord*xrp(ii,:)*(xrp(ii,:))';
+        Erom(ii)    = u(ii)*(yr(ii))';
+        Drom(ii)    = 1/ord*xrp(ii,:)*SCALE*(xrp(ii,:))';
+    end
+    intEfom = cumsum(Efom)*dt;
+    intDfom = cumsum(Dfom)*dt;
+    intErom = cumsum(Erom)*dt;
+    intDrom = cumsum(Drom)*dt;
+    %
+    col = parula(8);
+    %
+    figure, 
+    subplot(211), hold on
+    plot(tt,Hfom,'-','Color',col(1,:),'LineWidth',lw,'DisplayName','$\mathcal H$'), grid on
+    plot(tt,Hrom,'--','LineWidth',lw,'DisplayName','$\hat \mathcal H$'),
+    plot(tt,Efom,'-','Color',col(2,:),'LineWidth',lw,'DisplayName','$\mathcal E$')
+    plot(tt,Erom,'r--','LineWidth',lw,'DisplayName','$\hat \mathcal E$')
+    plot(tt,Dfom,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$\mathcal D$')
+    plot(tt,Drom,'k--','LineWidth',lw,'DisplayName','$\hat \mathcal D$')
+    legend('show');
+    xlabel('$t$'), ylabel('Energy'),
+    %
+    subplot(212), hold on
+    plot(tt,intEfom+intDfom,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$\int \mathcal E+\int \mathcal D $'), grid on
+    plot(tt,intErom+intDrom,'k--','LineWidth',lw,'DisplayName','$\int \hat \mathcal E+\int \hat \mathcal D $')
+    legend('show');
+    xlabel('$t$'), ylabel('Energy'),
+end

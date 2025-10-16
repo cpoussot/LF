@@ -27,3 +27,7 @@ info.N      = Nr;
 info.S      = Sr;
 info.Wcal   = Wcal;
 info.Vcal   = Vcal;
+%
+info.dx     = @(t,x,u) ((info.J-info.R)*info.Q)*x + (info.G-info.P)*u;
+info.y      = @(x,u) ((info.G+info.P).'*info.Q)*x + (info.N+info.S)*u;
+
