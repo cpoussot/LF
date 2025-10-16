@@ -1,5 +1,16 @@
-function [Vproj,Wproj,Vproj_x0] = projectors(H,Hr,J,X,Y,la_,mu_,Rj,Li,PROJ)
+%function [Vproj,Wproj,Vproj_x0] = projectors(H,Hr,J,X,Y,la_,mu_,Rj,Li,PROJ)
+function [Vproj,Wproj,Vproj_x0] = projectors(H,info_loep,PROJ)
 
+%
+Hr  = info_loep.Hr;
+J   = info_loep.J;
+X   = info_loep.X;
+Y   = info_loep.Y;
+la_ = info_loep.la;
+mu_ = info_loep.mu;
+Rj  = info_loep.R;
+Li  = info_loep.L;
+%
 r = length(Hr.a);
 n = length(H.a);
 if isempty(H.e)
@@ -32,4 +43,5 @@ switch lower(PROJ)
         Vproj       = R;
         Wproj       = (O)';
 end
+Vproj       = Vproj*info_loep.Vchol;
 Vproj_x0    = Hr.e\(Wproj');

@@ -1,5 +1,6 @@
-function [G,S,nu,ny,eigS] = examples(CAS)
+function [G,S,nu,ny,eigS,ph] = examples(CAS)
 
+ph = [];
 switch CAS
     case 'siso_vsimple' % Very simple
         ny  = 1;
@@ -63,6 +64,30 @@ switch CAS
         ny  = nu;
         E   = eye(size(A));
         S   = dss(A,B,C,D,E);
+    case 'msd'
+        m = 10; b = 3; k = 1;
+        m = 1; b = 1; k = 1;
+        %
+        n   = 2;
+        ny  = 1;
+        nu  = ny;
+        % SS X=[x dx]
+        E   = eye(n);
+        A   = [0 1; -k/m -b/m];
+        B   = [0; 1/m];
+        C   = [0 1];
+        D   = 0;
+        S   = dss(A,B,C,D,E);
+        % 
+        In      = eye(n);
+        ph.J    = [0 1; -1 0]/m;
+        ph.R    = [0 0; 0 b]/m^2;
+        ph.Q    = [k 0; 0 m];
+        ph.G    = [0; 1/m];
+        ph.P    = [0; 0];
+        ph.N    = 0;
+        ph.S    = 0;
+        ph.h    = @(s) ((ph.G+ph.P).'*ph.Q)*((s*In-(ph.J-ph.R)*ph.Q)\(ph.G-ph.P))+(ph.N+ph.S);
 end
 %
 eigS        = eig(S);
