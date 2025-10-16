@@ -39,7 +39,7 @@ The material contained in this package is mostly used to feel the LF and for edu
 
 # The "LF" MATLAB package 
 
-The code (`+lf` folder)  provided in this GitHub page is given for open science purpose. Its principal objective is to accompany the the readers, and thus aims at being as educative as possible rather than industry-oriented. Evolutions (numerical improvements) may come with time. Please, cite the reference above if used in your work and do not hesitate to contact us in case of bug of problem when using it. Below we present an example of use, then functions list are given.
+The code (`+lf` folder)  provided in this GitHub page is given for open science purpose. Its principal objective is to accompany the readers, and thus aims at being as educative as possible rather than industry-oriented. Evolutions (numerical improvements) may come with time. Please, cite the reference above if used in your work and do not hesitate to contact us in case of bug of problem when using it. Below we present an example of use, then functions list are given.
 
 ## A simple MATLAB code example
 
