@@ -105,7 +105,7 @@ if ~isempty(mdlph)
     f           = .01;
     dt          = .01;
     t           = 0:dt:20;
-    u           = @(t) (sin(2*pi*f*t.^3).*exp(-.1.*t))';
+    u           = @(t) (sin(2*pi*f*t.^3).*exp(-.01.*t))';
     uu          = u(t);
     x0          = zeros(length(S.A),1);
     % >> Original
@@ -122,12 +122,14 @@ if ~isempty(mdlph)
     
     % >> Compare output and states
     figure, 
-    subplot(211), hold on
+    subplot(311), hold on
+    plot(tt,uu,'-','LineWidth',lw,'DisplayName','$u$'), grid on
+    legend('show'); xlabel('$t$'), ylabel('Input'),
+    subplot(312), hold on
     plot(tt,yy,'-','LineWidth',lw,'DisplayName','Original'), grid on
     plot(tt,yr,'--','LineWidth',lw,'DisplayName','pH-ROM')
-    Lgnd = legend('show');
-    xlabel('$t$'), ylabel('Output'),% set(gca,'XScale','log')
-    subplot(212), hold on
+    legend('show'); xlabel('$t$'), ylabel('Output'),
+    subplot(313), hold on
     h1=plot(tt,xx,'-','LineWidth',lw); grid on
     h2=plot(tt,xr,'m:','LineWidth',lw);
     h3=plot(tt,xrp,'k--','LineWidth',lw);
@@ -158,19 +160,21 @@ if ~isempty(mdlph)
     col = parula(8);
     %
     figure, 
-    subplot(211), hold on
+    subplot(221), hold on
     plot(tt,Hfom,'-','Color',col(1,:),'LineWidth',lw,'DisplayName','$\mathcal H$'), grid on
     plot(tt,Hrom,'--','LineWidth',lw,'DisplayName','$\hat \mathcal H$'),
+    legend('show'); xlabel('$t$'), ylabel('Energy'),
+    subplot(222), hold on
     plot(tt,Efom,'-','Color',col(2,:),'LineWidth',lw,'DisplayName','$\mathcal E$')
     plot(tt,Erom,'r--','LineWidth',lw,'DisplayName','$\hat \mathcal E$')
+    legend('show'); xlabel('$t$'), ylabel('Energy'),
+    subplot(223), hold on
     plot(tt,Dfom,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$\mathcal D$')
     plot(tt,Drom,'k--','LineWidth',lw,'DisplayName','$\hat \mathcal D$')
-    legend('show');
-    xlabel('$t$'), ylabel('Energy'),
+    legend('show'); xlabel('$t$'), ylabel('Energy'),
     %
-    subplot(212), hold on
+    subplot(224), hold on
     plot(tt,intEfom+intDfom,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$\int \mathcal E+\int \mathcal D $'), grid on
     plot(tt,intErom+intDrom,'k--','LineWidth',lw,'DisplayName','$\int \hat \mathcal E+\int \hat \mathcal D $')
-    legend('show');
-    xlabel('$t$'), ylabel('Energy'),
+    legend('show'); xlabel('$t$'), ylabel('Energy'),
 end

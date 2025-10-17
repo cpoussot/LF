@@ -65,8 +65,8 @@ switch CAS
         E   = eye(size(A));
         S   = dss(A,B,C,D,E);
     case 'msd'
-        m = 10; b = 3; k = 1;
-        %m = 1; b = 1; k = 1;
+        %m = 10; b = 3; k = 1;
+        m = 1; b = 1; k = 1;
         %
         n   = 2;
         ny  = 1;

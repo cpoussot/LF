@@ -203,18 +203,18 @@ Examinate the outputs of the passive rational approximant `hloep`, `info_loep` a
 - on the informations contained in `info_loeph` (have a deeper look at these informations, especially on the pH matrices)
 
 
-## Exercise \#4: simple mass-spring-damper example (for passive and pH)
+## Exercise \#4: simple mass-spring-damper example - MSD (for passive and pH)
 
 ### Introduction
 
-Now use the example suggested in the Part 3 of the slides. The MSD is given the by following state-space equation,
+Now use the example suggested in the Part 3 of the slides. The MSD is given the by following state-space equations,
 ```math
 \begin{array}{rcl}
 E\dot{\mathbf{x}}(t) &=& A{\mathbf{x}}(t)+Bu(t)\\
 y(t) &=& C{\mathbf{x}}(t)
 \end{array}
 ```
-where ($x$ is the position and $\dot x$ the velocity of the mass),
+where ($x$ and $\dot x$ respectively are the position and the velocity of the mass),
 ```math
 {\mathbf{x}} = \left(\begin{array}{c} x\\ \dot x \end{array}\right)  ,\,
 E = I_2 ,\, 
@@ -222,7 +222,7 @@ A = \left(\begin{array}{cc} 0 & 1\\ -\frac{k}{m} & -\frac{b}{m} \end{array}\righ
 B = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right)  ,\,
 C = \left(\begin{array}{cc} 0 & 1 \end{array}\right)
 ```
-Notice that this model is passive. Now remark that it admits a pH form with this form,
+Notice that this model is passive (but not stricty). Now remark that it admits a pH form, e.g. with these equations,
 ```math
 \begin{array}{rcl}
 M\dot{\mathbf{x}}(t)&=&(J-R)Q{\mathbf{x}}(t)+(G-P)u(t) \\
@@ -240,10 +240,41 @@ G = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right) ,\,
 P = \left(\begin{array}{c} 0\\ 0 \end{array}\right) ,\,
 N = S = 0
 ```
+Finally, notice that the corresponding transfer function reads
+```math
+H(s) = \dfrac{s}{ms^2+bs+k}.
+```
 
-We want to recover such a structure on the basis of data only, using the LF.
 
-### Define a state-space model of the MSD and analyze it
+We want to recover/identify such a structure on the basis of data only, using the LF.
+
+### \#4.1: hand-written part
+
+To familirize you with LF, let us start with a very simple hand-written exercize.
+
+#### Select IP and compute data
+
+1. Select very simple interpolation points, e.g.
+```math
+\lambda = [1,2] \text{ and } \mu = -\lambda.
+```
+2. Evaluate the data 
+```math
+H(\lambda_1)=w_1,H(\lambda_2)=w_2 \text{ and }  H(\mu_1)=v_1,H(\mu_2)=v_2$.
+```
+3. Construct the Loewner matrix $\mathbb L$.
+4. Construct the shifted Loewner matrix $\mathbb M$.
+5. Construct input and output data matrices (vectors) $V$ and $W$.
+6. Compute the eigenvalues of the matrix pencil $(\mathbb L,\mathbb M)$. Note that here both are full column rank, thus can simplify with eigenvalues of $\mathbb L^{-1}\mathbb M$.
+7. Compute the iodentified rational form as
+```math
+R(s)= W(-s\mathbb L+\mathbb M)^{-1}V
+```
+8. Conclude 
+
+### \#4.2: numerical part
+
+#### Define a state-space model of the MSD and analyze it
 
 Let start by defining the state-space model. 
 ```Matlab
