@@ -76,6 +76,170 @@ Notice also that pathological cases may appear. A more advanced code, to deal wi
 
 The following exercises are set up to discover the LF and some of its features. It can be used to discover step by step how to set up and solve the interpolation problem.
 
+## Exercise \#1: simple mass-spring-damper example (MSD)
+
+### Introduction
+
+Now use the example suggested in the Part 3 of the slides. The MSD is given the by following state-space equations,
+```math
+\begin{array}{rcl}
+E\dot{\mathbf{x}}(t) &=& A{\mathbf{x}}(t)+Bu(t)\\
+y(t) &=& C{\mathbf{x}}(t)
+\end{array}
+```
+where ($x$ and $\dot x$ respectively are the position and the velocity of the mass),
+```math
+{\mathbf{x}} = \left(\begin{array}{c} x\\ \dot x \end{array}\right)  ,\,
+E = I_2 ,\, 
+A = \left(\begin{array}{cc} 0 & 1\\ -\frac{k}{m} & -\frac{b}{m} \end{array}\right) ,\,
+B = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right)  ,\,
+C = \left(\begin{array}{cc} 0 & 1 \end{array}\right)
+```
+Notice that this model is passive (but not stricty). Now remark that it admits a pH form, e.g. with these equations,
+```math
+\begin{array}{rcl}
+M\dot{\mathbf{x}}(t)&=&(J-R)Q{\mathbf{x}}(t)+(G-P)u(t) \\
+y(t)&=&(G+P)^\top Q{\mathbf{x}}(t)+(N+S)u(t)
+\end{array}
+```
+where, 
+```math
+{\mathbf{x}} = \left(\begin{array}{c} \alpha_x\\ \alpha_v \end{array}\right)  ,\,
+M = I_2 ,\, 
+J = \left(\begin{array}{cc} 0 & \frac{1}{m}\\ -\frac{1}{m} & 0 \end{array}\right) ,\,
+R = \left(\begin{array}{cc} 0 & 0\\ 0 & \frac{b}{m^2} \end{array}\right) ,\,
+Q = \left(\begin{array}{cc} k & 0\\ 0 & m \end{array}\right) ,\,
+G = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right) ,\,
+P = \left(\begin{array}{c} 0\\ 0 \end{array}\right) ,\,
+N = S = 0
+```
+Finally, notice that the corresponding transfer function reads
+```math
+H(s) = \dfrac{s}{ms^2+bs+k}.
+```
+
+
+We want to recover/identify such a structure on the basis of data only, using the LF.
+
+### \#1.1: hand-written part
+
+To familirize you with LF, let us start with a very simple hand-written exercise.
+
+1. Select very simple interpolation points, e.g.
+```math
+\lambda = [1,2] \text{ and } \mu = -\lambda.
+```
+2. Evaluate the data 
+```math
+H(\lambda_1)=w_1,H(\lambda_2)=w_2 \text{ and }  H(\mu_1)=v_1,H(\mu_2)=v_2$.
+```
+3. Construct the Loewner matrix $\mathbb L$.
+4. Construct the shifted Loewner matrix $\mathbb M$.
+5. Construct input and output data matrices (vectors) $V$ and $W$.
+6. Compute the eigenvalues of the matrix pencil $(\mathbb L,\mathbb M)$. Note that here both are full column rank, thus can simplify with eigenvalues of $\mathbb L^{-1}\mathbb M$.
+7. Compute the iodentified rational form as
+```math
+R(s)= W(-s\mathbb L+\mathbb M)^{-1}V.
+```
+8. Conclude.
+
+### \#1.2: numerical part
+
+
+1. Define a state-space model of the MSD and analyze it. Let us start by defining the state-space model with $m=k=b=1$. 
+```Matlab
+% MSD parameters
+m 	= 1; % mass
+k 	= 1;  % spring
+b 	= 1;  % damper
+% System properties
+n   = 2;
+ny  = 1;
+nu  = ny;
+% State-space X=[x dx]
+E   = eye(n);
+A   = [0 1; -k/m -b/m];
+B   = [0; 1/m];
+C   = [0 1];
+D   = 0;
+Hss = dss(A,B,C,D,E);
+hss = @(s) C*((s*E-A)\B) + D;
+```
+Compute eigenvalues, zeros and spectral zeros of the original system.
+```Matlab
+eigS        = eig(A,E);
+zerS        = eig([A B; C D],blkdiag(E,zeros(ny,nu)));
+[SZ_v,SZ]   = lf.spectral_zeros(Hss);
+```
+2. Apply the LF: use same set-up as in the exercise \#1.1 features.
+```Matlab
+pts     = [1 2];
+la      = pts;
+mu      = -pts;
+k       = length(la);
+q       = length(mu);
+R       = ones(nu,k);
+L       = ones(q,ny);
+for ii = 1:k; W(1:ny,1:nu,ii) = G(la(ii)); end
+for ii = 1:q; V(1:ny,1:nu,ii) = G(mu(ii)); end
+```
+Then, apply the LF (tangential version) to compute an approximant:
+```Matlab
+opt                 = [];
+opt.target          = r;
+opt.real            = true;
+[hloe,info_loe]     = lf.loewner_tng(la,mu,W,V,R,L,opt);
+```
+
+
+### Apply LF with passivity preservation
+
+Now enforce passivity. As there is a $D$ term is equal to zero, the theorem derived in the slides (Benner et al. 2021) are no longer satisfied, use the numerical trick proposed in (Poussot-Vassal et al. 2023). And recover the pH structure:
+```Matlab
+opt.Ds              = 1e-2;
+[hloep,info_loep]   = lf.loewner_passive(la,mu,W,V,R,L,D,opt);
+[hloeph,info_loeph] = lf.passive2ph(info_loep.Hr);
+```
+
+Analyse the outputs, evaluate the eigenvalues, zeros, and spectral zeros...
+
+### Go to the time-domain simulations
+
+Compute the projectors to recover the very same states variables.
+```Matlab
+% >> Projector
+[Vproj,Wproj,Vproj_x0]  = lf.projectors(S,info_loep,'none');
+```
+Now, simulate in the time-domain using an exciting signal $u$ signal, e.g.
+```Matlab
+% >> t, u, x0
+f           = .01;
+dt          = .01;
+t           = 0:dt:20;
+u           = @(t) (sin(2*pi*f*t.^3).*exp(-.1.*t))';
+uu          = u(t);
+x0          = zeros(length(S.A),1);
+```
+both full original 
+```Matlab
+% >> Original
+[tt,xx]     = ode45(@(t,x) mdlph.dx(t,x,u(t)), t, x0);
+yy          = mdlph.y(xx.',uu.');
+```
+and pH-ROM as 
+```Matlab
+% >> Identified and lift
+x0r         = Vproj_x0*x0;
+[tt,xr]     = ode45(@(t,x) info_loeph.dx(t,x,u(t)), tt, x0r);
+yr          = info_loeph.y(xr.',uu.');
+xrp         = (Vproj*xr.')';
+```
+
+Plot and compare outputs and states trajectories of the original and identified pH models, and conclude.
+
+
+
+
 ## Exercise \#1: first try with Loewner
 
 Define two toy rational transfer functions $G_1(s) = \frac{1}{2+s}$ and  $G_2(s) = \frac{s+1}{s+5}$ as a Matlab handle functions.
@@ -202,157 +366,6 @@ Examinate the outputs of the passive rational approximant `hloep`, `info_loep` a
 - on the informations contained in `info_loep` (have a deeper look at these informations).
 - on the informations contained in `info_loeph` (have a deeper look at these informations, especially on the pH matrices)
 
-
-## Exercise \#4: simple mass-spring-damper example - MSD (for passive and pH)
-
-### Introduction
-
-Now use the example suggested in the Part 3 of the slides. The MSD is given the by following state-space equations,
-```math
-\begin{array}{rcl}
-E\dot{\mathbf{x}}(t) &=& A{\mathbf{x}}(t)+Bu(t)\\
-y(t) &=& C{\mathbf{x}}(t)
-\end{array}
-```
-where ($x$ and $\dot x$ respectively are the position and the velocity of the mass),
-```math
-{\mathbf{x}} = \left(\begin{array}{c} x\\ \dot x \end{array}\right)  ,\,
-E = I_2 ,\, 
-A = \left(\begin{array}{cc} 0 & 1\\ -\frac{k}{m} & -\frac{b}{m} \end{array}\right) ,\,
-B = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right)  ,\,
-C = \left(\begin{array}{cc} 0 & 1 \end{array}\right)
-```
-Notice that this model is passive (but not stricty). Now remark that it admits a pH form, e.g. with these equations,
-```math
-\begin{array}{rcl}
-M\dot{\mathbf{x}}(t)&=&(J-R)Q{\mathbf{x}}(t)+(G-P)u(t) \\
-y(t)&=&(G+P)^\top Q{\mathbf{x}}(t)+(N+S)u(t)
-\end{array}
-```
-where, 
-```math
-{\mathbf{x}} = \left(\begin{array}{c} \alpha_x\\ \alpha_v \end{array}\right)  ,\,
-M = I_2 ,\, 
-J = \left(\begin{array}{cc} 0 & \frac{1}{m}\\ -\frac{1}{m} & 0 \end{array}\right) ,\,
-R = \left(\begin{array}{cc} 0 & 0\\ 0 & \frac{b}{m^2} \end{array}\right) ,\,
-Q = \left(\begin{array}{cc} k & 0\\ 0 & m \end{array}\right) ,\,
-G = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right) ,\,
-P = \left(\begin{array}{c} 0\\ 0 \end{array}\right) ,\,
-N = S = 0
-```
-Finally, notice that the corresponding transfer function reads
-```math
-H(s) = \dfrac{s}{ms^2+bs+k}.
-```
-
-
-We want to recover/identify such a structure on the basis of data only, using the LF.
-
-### \#4.1: hand-written part
-
-To familirize you with LF, let us start with a very simple hand-written exercize.
-
-#### Select IP and compute data
-
-1. Select very simple interpolation points, e.g.
-```math
-\lambda = [1,2] \text{ and } \mu = -\lambda.
-```
-2. Evaluate the data 
-```math
-H(\lambda_1)=w_1,H(\lambda_2)=w_2 \text{ and }  H(\mu_1)=v_1,H(\mu_2)=v_2$.
-```
-3. Construct the Loewner matrix $\mathbb L$.
-4. Construct the shifted Loewner matrix $\mathbb M$.
-5. Construct input and output data matrices (vectors) $V$ and $W$.
-6. Compute the eigenvalues of the matrix pencil $(\mathbb L,\mathbb M)$. Note that here both are full column rank, thus can simplify with eigenvalues of $\mathbb L^{-1}\mathbb M$.
-7. Compute the iodentified rational form as
-```math
-R(s)= W(-s\mathbb L+\mathbb M)^{-1}V
-```
-8. Conclude 
-
-### \#4.2: numerical part
-
-#### Define a state-space model of the MSD and analyze it
-
-Let start by defining the state-space model. 
-```Matlab
-% MSD parameters
-m 	= 10; % mass
-k 	= 1;  % spring
-b 	= 3;  % damper
-% System properties
-n   = 2;
-ny  = 1;
-nu  = ny;
-% State-space X=[x dx]
-E   = eye(n);
-A   = [0 1; -k/m -b/m];
-B   = [0; 1/m];
-C   = [0 1];
-D   = 0;
-Hss = dss(A,B,C,D,E);
-hss = @(s) C*((s*E-A)\B) + D;
-```
-Compute eigenvalues, zeros and spectral zeros.
-```Matlab
-eigS        = eig(A,E);
-zerS        = eig([A B; C D],blkdiag(E,zeros(ny,nu)));
-[SZ_v,SZ]   = lf.spectral_zeros(Hss);
-```
-
-### Apply LF 
-
-Use LF to compute an approximant with the following features
-- use complex conjugated IP;
-- target a minimal order recovering the exact model order;
-- target real valued matrices;
-
-### Apply LF with passivity preservation
-
-Now enforce passivity. As there is a $D$ term is equal to zero, the theorem derived in the slides (Benner et al. 2021) are no longer satisfied, use the numerical trick proposed in (Poussot-Vassal et al. 2023). And recover the pH structure:
-```Matlab
-opt.Ds              = 1e-2;
-[hloep,info_loep]   = lf.loewner_passive(la,mu,W,V,R,L,D,opt);
-[hloeph,info_loeph] = lf.passive2ph(info_loep.Hr);
-```
-
-Analyse the outputs, evaluate the eigenvalues, zeros, and spectral zeros...
-
-### Go to the time-domain simulations
-
-Compute the projectors to recover the very same states variables.
-```Matlab
-% >> Projector
-[Vproj,Wproj,Vproj_x0]  = lf.projectors(S,info_loep,'none');
-```
-Now, simulate in the time-domain using an exciting signal $u$ signal, e.g.
-```Matlab
-% >> t, u, x0
-f           = .01;
-dt          = .01;
-t           = 0:dt:20;
-u           = @(t) (sin(2*pi*f*t.^3).*exp(-.1.*t))';
-uu          = u(t);
-x0          = zeros(length(S.A),1);
-```
-both full original 
-```Matlab
-% >> Original
-[tt,xx]     = ode45(@(t,x) mdlph.dx(t,x,u(t)), t, x0);
-yy          = mdlph.y(xx.',uu.');
-```
-and pH-ROM as 
-```Matlab
-% >> Identified and lift
-x0r         = Vproj_x0*x0;
-[tt,xr]     = ode45(@(t,x) info_loeph.dx(t,x,u(t)), tt, x0r);
-yr          = info_loeph.y(xr.',uu.');
-xrp         = (Vproj*xr.')';
-```
-
-Plot and compare outputs and states trajectories of the original and identified pH models, and conclude.
 
 ## Exercise \#5: go far away and measure the flexibility of LF 
 
