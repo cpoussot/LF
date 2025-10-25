@@ -144,8 +144,9 @@ R(s)= W(-s\mathbb L+\mathbb M)^{-1}V.
 
 ### \#1.2: numerical part
 
+#### \#1.2.1: Define the system
 
-1. Define a state-space model of the MSD and analyze it. Let us start by defining the state-space model with $m=k=b=1$. 
+Define a state-space model of the MSD and analyze it. Let us start by defining the state-space model with $m=k=b=1$. 
 ```Matlab
 % MSD parameters
 m 	= 1; % mass
@@ -174,14 +175,16 @@ N   = 0;
 S   = 0;
 hph = @(s) ((G+P).'*Q)*((s*In-(J-R)*Q)\(G-P))+(N+S);
 ```
-
 Compute eigenvalues, zeros and spectral zeros of the original system.
 ```Matlab
 eigS        = eig(A,E);
 zerS        = eig([A B; C D],blkdiag(E,zeros(ny,nu)));
 [SZ_v,SZ]   = lf.spectral_zeros(Hss);
 ```
-2. Apply the LF: use same set-up as in the exercise \#1.1 features.
+
+#### \#1.2.2: First Loewner
+
+Apply the LF: use same set-up as in the exercise \#1.1 features.
 ```Matlab
 pts     = [1 2];
 la      = pts;
@@ -190,34 +193,30 @@ k       = length(la);
 q       = length(mu);
 R       = ones(nu,k);
 L       = ones(q,ny);
-for ii = 1:k; W(1:ny,1:nu,ii) = G(la(ii)); end
-for ii = 1:q; V(1:ny,1:nu,ii) = G(mu(ii)); end
+for ii = 1:k; W(1:ny,1:nu,ii) = hph(la(ii)); end
+for ii = 1:q; V(1:ny,1:nu,ii) = hph(mu(ii)); end
 ```
 Then, apply the LF (tangential version) to compute an approximant:
 ```Matlab
 opt                 = [];
-opt.target          = r;
-opt.real            = true;
+opt.target          = []; % automatic choice for the order
 [hloe,info_loe]     = lf.loewner_tng(la,mu,W,V,R,L,opt);
 ```
 
-
-### Apply LF with passivity preservation
+#### \#1.2.3: Apply LF with passivity preservation
 
 Now enforce passivity. As there is a $D$ term is equal to zero, the theorem derived in the slides (Benner et al. 2021) are no longer satisfied, use the numerical trick proposed in (Poussot-Vassal et al. 2023). And recover the pH structure:
 ```Matlab
 opt.Ds              = 1e-2;
 [hloep,info_loep]   = lf.loewner_passive(la,mu,W,V,R,L,D,opt);
-[hloeph,info_loeph] = lf.passive2ph(info_loep.Hr);
+[hloeph,info_loeph] = lf.passive2ph(info_loep.Hrn); % use the normalized Loewner realization
 ```
+Analyse the outputs, such as singular values; Then, evaluate the eigenvalues, zeros, and spectral zeros...
 
-Analyse the outputs, evaluate the eigenvalues, zeros, and spectral zeros...
+#### \#1.2.4: Go to the time-domain simulations
 
-### Go to the time-domain simulations
-
-Compute the projectors to recover the very same states variables.
+If the original state-space is known, compute the equivalent Loewner projectors to recover the very same states variables.
 ```Matlab
-% >> Projector
 [Vproj,Wproj,Vproj_x0]  = lf.projectors(Hss,info_loep,'none');
 ```
 Now, simulate in the time-domain using an exciting signal $u$ signal, e.g.
@@ -244,13 +243,10 @@ x0r         = Vproj_x0*x0;
 yr          = info_loeph.y(xr.',uu.');
 xrp         = (Vproj*xr.')';
 ```
-
 Plot and compare outputs and states trajectories of the original and identified pH models, and conclude.
 
 
-
-
-## Exercise \#1: first try with Loewner
+## Exercise \#2: First try with Loewner
 
 Define two toy rational transfer functions $G_1(s) = \frac{1}{2+s}$ and  $G_2(s) = \frac{s+1}{s+5}$ as a Matlab handle functions.
 ```Matlab
@@ -297,7 +293,7 @@ Examinate the outputs `htng` and `itng`, and conclude for either $G_1$ or $G_2$,
 - on the Sylvseter equations property;
 - on the informations contained in `itng` (have a deeper look at these informations).
 
-## Exercise \#2: dig a bit more...
+## Exercise \#3: dig a bit more...
 
 ### Construct data
 
@@ -353,7 +349,7 @@ Examinate the outputs `htng_real` and `itng_real`, and conclude
 Notice that the matrices and values are now real.
 
 
-## Exercise \#3: about reduction, passive models and pH structures
+## Exercise \#4: about reduction, passive models and pH structures
 
 ### Run the demo file `demo_ph.m`
 
