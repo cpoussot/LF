@@ -237,8 +237,8 @@ both full original
 ```Matlab
 hph_dx 		= @(t,x,u) ((J-R)*Q)*x + (G-P)*u;
 hph_y    	= @(x,u) ((G+P).'*Q)*x + (N+S)*u;
-[tt,xx]     = ode45(@(t,x) mdlph.dx(t,x,u(t)),t,x0);
-yy          = mdlph.y(xx.',uu.');
+[tt,xx]     = ode45(@(t,x) hph_dx(t,x,u(t)),t,x0);
+yy          = hph_y(xx.',uu.');
 ```
 and pH-ROM as 
 ```Matlab
