@@ -162,19 +162,21 @@ if ~isempty(mdlph)
     figure, 
     subplot(221), hold on
     plot(tt,Hfom,'-','Color',col(1,:),'LineWidth',lw,'DisplayName','$\mathcal H$'), grid on
-    plot(tt,Hrom,'--','LineWidth',lw,'DisplayName','$\hat \mathcal H$'),
+    plot(tt,Hrom,'k--','LineWidth',lw,'DisplayName','$\hat \mathcal H$'),
     legend('show'); xlabel('$t$'), ylabel('Energy'),
     subplot(222), hold on
-    plot(tt,Efom,'-','Color',col(2,:),'LineWidth',lw,'DisplayName','$\mathcal E$')
-    plot(tt,Erom,'r--','LineWidth',lw,'DisplayName','$\hat \mathcal E$')
+    plot(tt,Efom,'-','Color',col(2,:),'LineWidth',lw,'DisplayName','$\mathcal E$'), grid on
+    plot(tt,Erom,'k--','LineWidth',lw,'DisplayName','$\hat \mathcal E$')
+    plot(tt,intEfom,'-','Color',col(5,:),'LineWidth',lw,'DisplayName','$\int \mathcal E$'), grid on
     legend('show'); xlabel('$t$'), ylabel('Energy'),
     subplot(223), hold on
-    plot(tt,Dfom,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$\mathcal D$')
+    plot(tt,Dfom,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$\mathcal D$'), grid on
     plot(tt,Drom,'k--','LineWidth',lw,'DisplayName','$\hat \mathcal D$')
+    plot(tt,intDfom,'-','Color',col(5,:),'LineWidth',lw,'DisplayName','$\int \mathcal D$'), grid on
     legend('show'); xlabel('$t$'), ylabel('Energy'),
     %
-    subplot(224), hold on
-    plot(tt,intEfom+intDfom,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$\int \mathcal E+\int \mathcal D $'), grid on
-    plot(tt,intErom+intDrom,'k--','LineWidth',lw,'DisplayName','$\int \hat \mathcal E+\int \hat \mathcal D $')
-    legend('show'); xlabel('$t$'), ylabel('Energy'),
+    % subplot(224), hold on
+    % plot(tt,intEfom+intDfom,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$\int \mathcal E+\int \mathcal D $'), grid on
+    % plot(tt,intErom+intDrom,'k--','LineWidth',lw,'DisplayName','$\int \hat \mathcal E+\int \hat \mathcal D $')
+    % legend('show'); xlabel('$t$'), ylabel('Energy'),
 end

@@ -118,12 +118,11 @@ Finally, notice that the corresponding transfer function reads
 H(s) = \dfrac{s}{ms^2+bs+k}.
 ```
 
-
 We want to recover/identify such a structure on the basis of data only, using the LF.
 
 ### \#1.1: hand-written part
 
-To familirize you with LF, let us start with a very simple hand-written exercise.
+To familiarize you with LF, let us start with a very simple hand-written exercise (e.g. with $m=b=k=1$).
 
 1. Select very simple interpolation points, e.g.
 ```math
@@ -150,8 +149,8 @@ R(s)= W(-s\mathbb L+\mathbb M)^{-1}V.
 ```Matlab
 % MSD parameters
 m 	= 1; % mass
-k 	= 1;  % spring
-b 	= 1;  % damper
+k 	= 1; % spring
+b 	= 1; % damper
 % System properties
 n   = 2;
 ny  = 1;
@@ -164,7 +163,18 @@ C   = [0 1];
 D   = 0;
 Hss = dss(A,B,C,D,E);
 hss = @(s) C*((s*E-A)\B) + D;
+% SS-pH form X=ALPHA=[alpha_x alpha_v]
+In  = eye(n);
+J   = [0 1; -1 0]/m;
+R   = [0 0; 0 b]/m^2;
+Q   = [k 0; 0 m];
+G   = [0; 1/m];
+P   = [0; 0];
+N   = 0;
+S   = 0;
+hph = @(s) ((G+P).'*Q)*((s*In-(J-R)*Q)\(G-P))+(N+S);
 ```
+
 Compute eigenvalues, zeros and spectral zeros of the original system.
 ```Matlab
 eigS        = eig(A,E);
@@ -208,7 +218,7 @@ Analyse the outputs, evaluate the eigenvalues, zeros, and spectral zeros...
 Compute the projectors to recover the very same states variables.
 ```Matlab
 % >> Projector
-[Vproj,Wproj,Vproj_x0]  = lf.projectors(S,info_loep,'none');
+[Vproj,Wproj,Vproj_x0]  = lf.projectors(Hss,info_loep,'none');
 ```
 Now, simulate in the time-domain using an exciting signal $u$ signal, e.g.
 ```Matlab
@@ -218,7 +228,7 @@ dt          = .01;
 t           = 0:dt:20;
 u           = @(t) (sin(2*pi*f*t.^3).*exp(-.1.*t))';
 uu          = u(t);
-x0          = zeros(length(S.A),1);
+x0          = zeros(length(Hss.A),1);
 ```
 both full original 
 ```Matlab
