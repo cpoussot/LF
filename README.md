@@ -153,31 +153,33 @@ R(s)= W(-s\mathbb L+\mathbb M)^{-1}V.
 Define a state-space model of the MSD and analyze it. Let us start by defining the state-space model with $m=k=b=1$. 
 ```Matlab
 % MSD parameters
-m 	= 1; % mass
-k 	= 1; % spring
-b 	= 1; % damper
+m 		= 1; % mass
+k 		= 1; % spring
+b 		= 1; % damper
 % System properties
-n   = 2;
-ny  = 1;
-nu  = ny;
+n   	= 2;
+ny  	= 1;
+nu  	= ny;
 % State-space X=[x dx]
-E   = eye(n);
-A   = [0 1; -k/m -b/m];
-B   = [0; 1/m];
-C   = [0 1];
-D   = 0;
-Hss = dss(A,B,C,D,E);
-hss = @(s) C*((s*E-A)\B) + D;
+E   	= eye(n);
+A   	= [0 1; -k/m -b/m];
+B   	= [0; 1/m];
+C   	= [0 1];
+D   	= 0;
+Hss 	= dss(A,B,C,D,E);
+hss 	= @(s) C*((s*E-A)\B) + D;
 % SS-pH form X=ALPHA=[alpha_x alpha_v]
-In  = eye(n);
-J   = [0 1; -1 0]/m;
-R   = [0 0; 0 b]/m^2;
-Q   = [k 0; 0 m];
-G   = [0; 1/m];
-P   = [0; 0];
-N   = 0;
-S   = 0;
-hph = @(s) ((G+P).'*Q)*((s*In-(J-R)*Q)\(G-P))+(N+S);
+In  	= eye(n);
+J   	= [0 1; -1 0]/m;
+R   	= [0 0; 0 b]/m^2;
+Q   	= [k 0; 0 m];
+G   	= [0; 1/m];
+P   	= [0; 0];
+N   	= 0;
+S   	= 0;
+hph 	= @(s) ((G+P).'*Q)*((s*In-(J-R)*Q)\(G-P))+(N+S);
+hph_dx 	= @(t,x,u) ((J-R)*Q)*x + (G-P)*u;
+hph_y   = @(x,u) ((G+P).'*Q)*x + (N+S)*u;
 ```
 Compute eigenvalues, zeros and spectral zeros of the original system.
 ```Matlab
@@ -211,7 +213,7 @@ opt.target          = []; % automatic choice for the order
 
 Now enforce passivity. As there is a $D$ term is equal to zero, the theorem derived in the slides (Benner et al. 2021) are no longer satisfied, use the numerical trick proposed in (Poussot-Vassal et al. 2023). And recover the pH structure:
 ```Matlab
-opt.Ds              = 1e-2; % numerical trick to deal with non-strictly passive systems (this on is)
+opt.Ds              = 1e-2; % numerical trick to deal with non-strictly passive systems (this one is)
 [hloep,info_loep]   = lf.loewner_passive(la,mu,W,V,R,L,D,opt);
 [hloeph,info_loeph] = lf.passive2ph(info_loep.Hrn); % use the normalized Loewner realization
 ```
@@ -235,8 +237,6 @@ x0          = zeros(n,1);
 ```
 both full original 
 ```Matlab
-hph_dx 		= @(t,x,u) ((J-R)*Q)*x + (G-P)*u;
-hph_y    	= @(x,u) ((G+P).'*Q)*x + (N+S)*u;
 [tt,xx]     = ode45(@(t,x) hph_dx(t,x,u(t)),t,x0);
 yy          = hph_y(xx.',uu.');
 ```
