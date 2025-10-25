@@ -130,12 +130,16 @@ To familiarize you with LF, let us start with a very simple hand-written exercis
 ```
 2. Evaluate the data 
 ```math
-H(\lambda_1)=w_1,H(\lambda_2)=w_2 \text{ and }  H(\mu_1)=v_1,H(\mu_2)=v_2$.
+H(\lambda_1)=w_1,H(\lambda_2)=w_2 \text{ and }  H(\mu_1)=v_1,H(\mu_2)=v_2.
 ```
 3. Construct the Loewner matrix $\mathbb L$.
 4. Construct the shifted Loewner matrix $\mathbb M$.
 5. Construct input and output data matrices (vectors) $V$ and $W$.
-6. Compute the eigenvalues of the matrix pencil $(\mathbb L,\mathbb M)$. Note that here both are full column rank, thus can simplify with eigenvalues of $\mathbb L^{-1}\mathbb M$.
+6. Compute the eigenvalues of the matrix pencil $(\mathbb L,\mathbb M)$, being the pair $(D,V)$ solving where $D$ is a diagonal matrix with eigenvalue entries and $V$ its associated right eigenvectors,
+```math
+A V = E V  D.
+```
+Note that here both are full column rank, thus can simplify with eigenvalues of $\mathbb L^{-1}\mathbb M$.
 7. Compute the iodentified rational form as
 ```math
 R(s)= W(-s\mathbb L+\mathbb M)^{-1}V.
@@ -207,7 +211,7 @@ opt.target          = []; % automatic choice for the order
 
 Now enforce passivity. As there is a $D$ term is equal to zero, the theorem derived in the slides (Benner et al. 2021) are no longer satisfied, use the numerical trick proposed in (Poussot-Vassal et al. 2023). And recover the pH structure:
 ```Matlab
-opt.Ds              = 1e-2;
+opt.Ds              = 1e-2; % numerical trick to deal with non-strictly passive systems (this on is)
 [hloep,info_loep]   = lf.loewner_passive(la,mu,W,V,R,L,D,opt);
 [hloeph,info_loeph] = lf.passive2ph(info_loep.Hrn); % use the normalized Loewner realization
 ```
@@ -221,23 +225,23 @@ If the original state-space is known, compute the equivalent Loewner projectors 
 ```
 Now, simulate in the time-domain using an exciting signal $u$ signal, e.g.
 ```Matlab
-% >> t, u, x0
-f           = .01;
 dt          = .01;
 t           = 0:dt:20;
-u           = @(t) (sin(2*pi*f*t.^3).*exp(-.1.*t))';
+f           = .01; % principal harmonics
+sig 		= -.1; % decay rate
+u           = @(t) (sin(2*pi*f*t.^3).*exp(sig.*t))';
 uu          = u(t);
-x0          = zeros(length(Hss.A),1);
+x0          = zeros(n,1);
 ```
 both full original 
 ```Matlab
-% >> Original
-[tt,xx]     = ode45(@(t,x) mdlph.dx(t,x,u(t)), t, x0);
+hph_dx 		= @(t,x,u) ((J-R)*Q)*x + (G-P)*u;
+hph_y    	= @(x,u) ((G+P).'*Q)*x + (N+S)*u;
+[tt,xx]     = ode45(@(t,x) mdlph.dx(t,x,u(t)),t,x0);
 yy          = mdlph.y(xx.',uu.');
 ```
 and pH-ROM as 
 ```Matlab
-% >> Identified and lift
 x0r         = Vproj_x0*x0;
 [tt,xr]     = ode45(@(t,x) info_loeph.dx(t,x,u(t)), tt, x0r);
 yr          = info_loeph.y(xr.',uu.');
