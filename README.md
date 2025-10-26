@@ -4,15 +4,17 @@
 
 The Loewner Framework (LF) is a data-driven model identification and reduction technique that takes its root in ["Rational interpolation and state-variable realizations"](https://doi.org/10.1016/0024-3795(90)90140-8), by B.D.O. Anderson and A.C. Antoulas, where connection between the Loewner matrix and rational barycentric form was highlighted. Later in ["A framework for the solution of the generalized realization problem"](https://doi.org/10.1016/j.laa.2007.03.008), by A.J. Mayo and A.C. Antoulas, authors extented this framework to connect the Loewner (and shifted Loewner) matrix to the property of minimal realization, bridging the gap between rational interpolation, realization and system theory. 
 
-The Loewner framework (LF) can thus be viewed as a data-driven model identification, reduction and approximation tool. It provides a solution through rational approximation by means of interpolation. Using only measured data, the LF constructs surrogate models directly and with low computational effort (e.g. using only basic linear algebra operations and SVD-like deocompositions). For recent tutorial papers on LF applied to linear dynamical systems, we refer the reader to ["A Tutorial Introduction to the Loewner Framework for Model Reduction"](https://doi.org/10.1137/1.9781611974829.ch8), by A.C. Antoulas, A.C. Ionita and S. Lefteriu.
+The Loewner framework (LF) can thus be viewed as a data-driven model identification, reduction and approximation tool. It provides a solution through rational approximation by means of interpolation. Using only measured data, the LF constructs surrogate models directly (i.e. without iterations) and with low computational effort (e.g. using only basic linear algebra operations and SVD-like deocompositions). For recent tutorial papers on LF applied to linear dynamical systems, we refer the reader to ["A Tutorial Introduction to the Loewner Framework for Model Reduction"](https://doi.org/10.1137/1.9781611974829.ch8), by A.C. Antoulas, A.C. Ionita and S. Lefteriu. Last, we refer to ["Identification of port-Hamiltonian systems from frequency response data"](https://doi.org/10.1016/j.sysconle.2020.104741), by P. Benner, P. Goyal and P. Van-Dooren for an extention to passive and pH-structures.
+
 
 It is suited to approximate, from any data-set:
 - an interpolatory model given with a realization,
-- with minimal complexity.
+- with minimal complexity,
+- and with potentially passivity and pH forlm preservation.
 
 ## Contribution (dis)claim
 
-The present page does not aim neither at describing this framework in details nor providing a novel contribution, but rather to provide elementary ingredients to test and teach the LF thanks to MATLAB codes and the package `+lf`. The latter includes the following features and functions:
+The present page does not aim neither at describing this framework in details nor providing a novel contribution, but rather to provide elementary ingredients to test and teach the LF thanks to MATLAB codes and the suggested package `+lf`. The latter includes the following principal features and functions:
 - approximate any SISO to MIMO data-set with a rational functions;
 - with controlled complexity; 
 - with passivity preservation;
@@ -21,6 +23,8 @@ The present page does not aim neither at describing this framework in details no
 The material contained in this package is mostly used to feel the LF and for education purpose. Additional features to deal with passivity and port-Hamiltonian  systems are also given.
 
 ## Main reference (from the author)
+
+In addition to the highly relevant references mentionned in the introduction, interested reader may also refer to the paper ["Data-driven modeling and control of large-scale dynamical systems in the Loewner framework"](https://doi.org/10.1016/bs.hna.2021.12.015), by I.V. Gosea, C. Poussot-Vassal and A.C. Antoulas, which details some recent advances.
 
 ```
 @article{GPVA:2022,
@@ -40,6 +44,8 @@ The material contained in this package is mostly used to feel the LF and for edu
 # The "LF" MATLAB package 
 
 The code (`+lf` folder)  provided in this GitHub page is given for open science purpose. Its principal objective is to accompany the readers, and thus aims at being as educative as possible rather than industry-oriented. Evolutions (numerical improvements) may come with time. Please, cite the reference above if used in your work and do not hesitate to contact us in case of bug of problem when using it. Below we present an example of use, then functions list are given.
+
+Moreover, for more numerically robust and involved implementation and features, we invite reader and users to refer to the [MDSPPACK](https://mordigitalsystems.fr/static/mdspack_html/MDSpack-guide.html) library by [MOR Digital Systems](https://mordigitalsystems.fr).
 
 ## A simple MATLAB code example
 
@@ -138,7 +144,7 @@ H(\lambda_1)=w_1,H(\lambda_2)=w_2 \text{ and }  H(\mu_1)=v_1,H(\mu_2)=v_2.
 6. Compute the rank of $\mathbb L$.
 7. Compute the eigenvalues of the matrix pencil $(\mathbb L,\mathbb M)$, being the pair $(D,V)$ solving where $D$ is a diagonal matrix with eigenvalue entries and $V$ its associated right eigenvectors (note that here, $\mathbb L$ is full column rank, thus can simplify with eigenvalues of $\mathbb L^{-1}\mathbb M$),
 ```math
-A V = E V  D.
+A V = D E V.
 ```
 8. Compute the identified rational form as
 ```math
@@ -436,11 +442,11 @@ Examinate the outputs of the passive rational approximant `hloep`, `info_loep` a
 
 - Play with target order (`opt.target`).
 - Change the original function and try replace with an irrational one such as
-```Matlab
-G(s)=\frac{1}{se^{-s}+1}$.
+```math
+G(s)=\frac{1}{se^{-s}+1}
 ```
-```Matlab
-G(s)=\frac{s^3+s+1}{s+1}$.
+```math
+G(s)=\frac{s^3+s+1}{s+1}
 ```
 - Enjoy!
 
