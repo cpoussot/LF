@@ -247,10 +247,69 @@ x0r         = Vproj_x0*x0;
 yr          = info_loeph.y(xr.',uu.');
 xrp         = (Vproj*xr.')';
 ```
-Plot and compare outputs and states trajectories of the original and identified pH models, and conclude.
+Plot and compare outputs and states trajectories of the original and identified pH models, and conclude. Below a set of plots
+```Matlab
+mw = 10; lw = 3;
+% >> Singular values
+figure, hold on, grid on
+plot(info_loe.sv,'-o','MarkerSize',mw,'LineWidth',lw)
+plot(info_loe.sv_nu,'-o','MarkerSize',mw,'LineWidth',lw)
+set(gca,'YScale','log')
+xlabel('$k$','Interpreter','latex'), ylabel('Normalized singular value','Interpreter','latex')
+title(['Singular values $r=' num2str(info_loe.r) '$'],'Interpreter','latex')
+legend({'svd($[\bf{L},\bf{M}]$)','svd($\bf{L}$)'},'Location','best','Interpreter','latex')
+% >> Eigenvalues
+eigS    = eig(S);
+eigHt   = eig(info_loe.Hr);
+eigHp   = eig(info_loep.Hr);
+figure, hold on, grid on
+plot(real(eigS),imag(eigS),'.','MarkerSize',mw,'LineWidth',lw);
+plot(real(eigHt),imag(eigHt),'o','MarkerSize',mw,'LineWidth',lw);
+plot(real(eigHp),imag(eigHp),'s','MarkerSize',mw,'LineWidth',lw);
+title(['Eigenvalues $r=' num2str(info_loe.r) '$'],'Interpreter','latex')
+xlabel('Real','Interpreter','latex'), ylabel('Imag.','Interpreter','latex')
+legend({'Original' ['Loewner (\texttt{isPassive}:' num2str(isPassive(info_loe.Hr)) ')'] ['passive Loewner (\texttt{isPassive}:' num2str(isPassive(info_loep.Hr)) ')']},'location','best','Interpreter','latex')
+% >> Bode magnitude
+w = logspace(-2,3,1e4);
+for i = 1:numel(w)
+    hph_(1,1,i)         = hph(1i*w(i));
+    hloe_(1,1,i)      = hloe(1i*w(i)); 
+    hloep_(1,1,i)     = hloep(1i*w(i));
+    hloeph_(1,1,i)    = hloeph(1i*w(i));
+end
+figure, hold on, grid on
+plot(w,20*log10(abs(squeeze(hph_(1,1,:)))),'-','LineWidth',lw), set(gca,'XScale','log')
+plot(w,20*log10(abs(squeeze(hloe_(1,1,:)))),'--','LineWidth',lw), set(gca,'XScale','log')
+plot(w,20*log10(abs(squeeze(hloep_(1,1,:)))),':','LineWidth',lw), set(gca,'XScale','log')
+plot(w,20*log10(abs(squeeze(hloeph_(1,1,:)))),'-.','LineWidth',lw), set(gca,'XScale','log')
+xlabel('pulsation [rad/s]','Interpreter','latex');
+sgtitle('Bode magnitude','Interpreter','latex')
+legend({'Original' ... 
+       ['Loewner (\texttt{isPassive}:' num2str(isPassive(info_loe.Hr)) ')'] ...
+       ['passive Loewner (\texttt{isPassive}:' num2str(isPassive(info_loep.Hr)) ')'] ... 
+       'pH Loewner'},'location','best','Interpreter','latex')
+% >> Time domain
+figure, 
+subplot(311), hold on
+plot(tt,uu,'-','LineWidth',lw,'DisplayName','$u$'), grid on
+legend('show','Interpreter','latex'); xlabel('$t$','Interpreter','latex'), ylabel('Input','Interpreter','latex'),
+subplot(312), hold on
+plot(tt,yy,'-','LineWidth',lw,'DisplayName','Original'), grid on
+plot(tt,yr,'--','LineWidth',lw,'DisplayName','pH-ROM')
+legend('show','Interpreter','latex'); xlabel('$t$','Interpreter','latex'), ylabel('Output','Interpreter','latex'),
+subplot(313), hold on
+h1=plot(tt,xx,'-','LineWidth',lw); grid on
+h2=plot(tt,xr,'m:','LineWidth',lw);
+h3=plot(tt,xrp,'k--','LineWidth',lw);
+leg = legend([h1(1), h2(1), h3(1)], ... 
+             'Original',...
+             'pH-ROM', ...
+             'pH-ROM (lifted)');
+set(leg, 'interpreter','latex','Interpreter','latex')
+xlabel('$t$','Interpreter','latex'), ylabel('Internal variables','Interpreter','latex'),
+```
 
-
-## Exercise \#2: First try with Loewner
+## Exercise \#2: First autonomous try with LF
 
 Define two toy rational transfer functions $G_1(s) = \frac{1}{2+s}$ and  $G_2(s) = \frac{s+1}{s+5}$ as a Matlab handle functions.
 ```Matlab
