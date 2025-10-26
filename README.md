@@ -140,6 +140,7 @@ H(\lambda_1)=w_1,H(\lambda_2)=w_2 \text{ and }  H(\mu_1)=v_1,H(\mu_2)=v_2.
 A V = E V  D.
 ```
 Note that here both are full column rank, thus can simplify with eigenvalues of $\mathbb L^{-1}\mathbb M$.
+
 7. Compute the iodentified rational form as
 ```math
 R(s)= W(-s\mathbb L+\mathbb M)^{-1}V.
