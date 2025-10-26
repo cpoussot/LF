@@ -448,7 +448,7 @@ G(s)=\frac{1}{se^{-s}+1}
 ```math
 G(s)=s^3+s+1
 ```
-- Enjoy!
+- Enjoy the Loewner rule!
 
 
 
