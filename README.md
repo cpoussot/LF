@@ -446,7 +446,7 @@ Examinate the outputs of the passive rational approximant `hloep`, `info_loep` a
 G(s)=\frac{1}{se^{-s}+1}
 ```
 ```math
-G(s)=\frac{s^3+s+1}{s+1}
+G(s)=s^3+s+1
 ```
 - Enjoy!
 
