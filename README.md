@@ -135,12 +135,11 @@ H(\lambda_1)=w_1,H(\lambda_2)=w_2 \text{ and }  H(\mu_1)=v_1,H(\mu_2)=v_2.
 3. Construct the Loewner matrix $\mathbb L$.
 4. Construct the shifted Loewner matrix $\mathbb M$.
 5. Construct input and output data matrices (vectors) $V$ and $W$.
-6. Compute the eigenvalues of the matrix pencil $(\mathbb L,\mathbb M)$, being the pair $(D,V)$ solving where $D$ is a diagonal matrix with eigenvalue entries and $V$ its associated right eigenvectors,
+6. Compute the eigenvalues of the matrix pencil $(\mathbb L,\mathbb M)$, being the pair $(D,V)$ solving where $D$ is a diagonal matrix with eigenvalue entries and $V$ its associated right eigenvectors (note that here, $\mathbb L$ is full column rank, thus can simplify with eigenvalues of $\mathbb L^{-1}\mathbb M$),
 ```math
 A V = E V  D.
 ```
-Note that here both are full column rank, thus can simplify with eigenvalues of $\mathbb L^{-1}\mathbb M$. 
-7. Compute the iodentified rational form as
+7. Compute the identified rational form as
 ```math
 R(s)= W(-s\mathbb L+\mathbb M)^{-1}V.
 ```
