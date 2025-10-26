@@ -80,7 +80,7 @@ The following exercises are set up to discover the LF and some of its features. 
 
 ### Introduction
 
-Now use the example suggested in the Part 3 of the slides. The MSD is given the by following state-space equations,
+Let us use the simple sinlge mass-spring-damper (MSD) system. The MSD is given the by following state-space equations,
 ```math
 \begin{array}{rcl}
 E\dot{\mathbf{x}}(t) &=& A{\mathbf{x}}(t)+Bu(t)\\
@@ -93,16 +93,16 @@ where ($x$ and $\dot x$ respectively are the position and the velocity of the ma
 E = I_2 ,\, 
 A = \left(\begin{array}{cc} 0 & 1\\ -\frac{k}{m} & -\frac{b}{m} \end{array}\right) ,\,
 B = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right)  ,\,
-C = \left(\begin{array}{cc} 0 & 1 \end{array}\right)
+C = \left(\begin{array}{cc} 0 & 1 \end{array}\right).
 ```
-Notice that this model is passive (but not stricty). Now remark that it admits a pH form, e.g. with these equations,
+Notice that this model is passive (but not stricty). Now remark that it admits a port Hamiltonian (pH) form, e.g. with these equations,
 ```math
 \begin{array}{rcl}
 M\dot{\mathbf{x}}(t)&=&(J-R)Q{\mathbf{x}}(t)+(G-P)u(t) \\
 y(t)&=&(G+P)^\top Q{\mathbf{x}}(t)+(N+S)u(t)
 \end{array}
 ```
-where, 
+where ($\alpha_x$ and $\alpha_v$ are the energy variables), 
 ```math
 {\mathbf{x}} = \left(\begin{array}{c} \alpha_x\\ \alpha_v \end{array}\right)  ,\,
 M = I_2 ,\, 
@@ -111,7 +111,7 @@ R = \left(\begin{array}{cc} 0 & 0\\ 0 & \frac{b}{m^2} \end{array}\right) ,\,
 Q = \left(\begin{array}{cc} k & 0\\ 0 & m \end{array}\right) ,\,
 G = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right) ,\,
 P = \left(\begin{array}{c} 0\\ 0 \end{array}\right) ,\,
-N = S = 0
+N = S = 0.
 ```
 Finally, notice that the corresponding transfer function reads
 ```math
@@ -135,15 +135,16 @@ H(\lambda_1)=w_1,H(\lambda_2)=w_2 \text{ and }  H(\mu_1)=v_1,H(\mu_2)=v_2.
 3. Construct the Loewner matrix $\mathbb L$.
 4. Construct the shifted Loewner matrix $\mathbb M$.
 5. Construct input and output data matrices (vectors) $V$ and $W$.
-6. Compute the eigenvalues of the matrix pencil $(\mathbb L,\mathbb M)$, being the pair $(D,V)$ solving where $D$ is a diagonal matrix with eigenvalue entries and $V$ its associated right eigenvectors (note that here, $\mathbb L$ is full column rank, thus can simplify with eigenvalues of $\mathbb L^{-1}\mathbb M$),
+6. Compute the rank of $\mathbb L$.
+7. Compute the eigenvalues of the matrix pencil $(\mathbb L,\mathbb M)$, being the pair $(D,V)$ solving where $D$ is a diagonal matrix with eigenvalue entries and $V$ its associated right eigenvectors (note that here, $\mathbb L$ is full column rank, thus can simplify with eigenvalues of $\mathbb L^{-1}\mathbb M$),
 ```math
 A V = E V  D.
 ```
-7. Compute the identified rational form as
+8. Compute the identified rational form as
 ```math
 R(s)= W(-s\mathbb L+\mathbb M)^{-1}V.
 ```
-8. Conclude.
+9. Conclude.
 
 ### \#1.2: numerical part
 
@@ -167,7 +168,7 @@ C   	= [0 1];
 D   	= 0;
 Hss 	= dss(A,B,C,D,E);
 hss 	= @(s) C*((s*E-A)\B) + D;
-% SS-pH form X=ALPHA=[alpha_x alpha_v]
+% State-space with pH form X=ALPHA=[alpha_x alpha_v]
 In  	= eye(n);
 J   	= [0 1; -1 0]/m;
 R   	= [0 0; 0 b]/m^2;
@@ -180,7 +181,7 @@ hph 	= @(s) ((G+P).'*Q)*((s*In-(J-R)*Q)\(G-P))+(N+S);
 hph_dx 	= @(t,x,u) ((J-R)*Q)*x + (G-P)*u;
 hph_y   = @(x,u) ((G+P).'*Q)*x + (N+S)*u;
 ```
-Compute eigenvalues, zeros and spectral zeros of the original system.
+Compute eigenvalues (singularities of $H$), zeros (zeros of $H$) and spectral zeros (zeros of $\Phi(s)=H(s)+H(-s)^\top$) of the original system.
 ```Matlab
 eigS        = eig(A,E);
 zerS        = eig([A B; C D],blkdiag(E,zeros(ny,nu)));
@@ -189,7 +190,7 @@ zerS        = eig([A B; C D],blkdiag(E,zeros(ny,nu)));
 
 #### \#1.2.2: First Loewner
 
-Apply the LF: use same set-up as in the exercise \#1.1 features.
+Let us now apply the LF. One may start with the same set-up (i.e. interpolation points) as in exercise \#1.1.
 ```Matlab
 pts     = [1 2];
 la      = pts;
@@ -201,11 +202,9 @@ L       = ones(q,ny);
 for ii = 1:k; W(1:ny,1:nu,ii) = hph(la(ii)); end
 for ii = 1:q; V(1:ny,1:nu,ii) = hph(mu(ii)); end
 ```
-Then, apply the LF (tangential version) to compute an approximant:
+Then, apply the nominal LF (tangential version) to compute an approximant:
 ```Matlab
-opt                 = [];
-opt.target          = []; % automatic choice for the order
-[hloe,info_loe]     = lf.loewner_tng(la,mu,W,V,R,L,opt);
+[hloe,info_loe]     = lf.loewner_tng(la,mu,W,V,R,L);
 ```
 
 #### \#1.2.3: Apply LF with passivity preservation
@@ -220,7 +219,7 @@ Analyse the outputs, such as singular values; Then, evaluate the eigenvalues, ze
 
 #### \#1.2.4: Go to the time-domain simulations
 
-If the original state-space is known, compute the equivalent Loewner projectors to recover the very same states variables.
+If the original state-space is known, compute the equivalent Loewner projectors to recover / lift the very same states variables.
 ```Matlab
 [Vproj,Wproj,Vproj_x0]  = lf.projectors(Hss,info_loep,'none');
 ```
@@ -258,7 +257,6 @@ xlabel('$k$','Interpreter','latex'), ylabel('Normalized singular value','Interpr
 title(['Singular values $r=' num2str(info_loe.r) '$'],'Interpreter','latex')
 legend({'svd($[\bf{L},\bf{M}]$)','svd($\bf{L}$)'},'Location','best','Interpreter','latex')
 % >> Eigenvalues
-eigS    = eig(S);
 eigHt   = eig(info_loe.Hr);
 eigHp   = eig(info_loep.Hr);
 figure, hold on, grid on
@@ -271,10 +269,10 @@ legend({'Original' ['Loewner (\texttt{isPassive}:' num2str(isPassive(info_loe.Hr
 % >> Bode magnitude
 w = logspace(-2,3,1e4);
 for i = 1:numel(w)
-    hph_(1,1,i)         = hph(1i*w(i));
-    hloe_(1,1,i)      = hloe(1i*w(i)); 
-    hloep_(1,1,i)     = hloep(1i*w(i));
-    hloeph_(1,1,i)    = hloeph(1i*w(i));
+    hph_(1,1,i)   	= hph(1i*w(i));
+    hloe_(1,1,i)    = hloe(1i*w(i)); 
+    hloep_(1,1,i)  	= hloep(1i*w(i));
+    hloeph_(1,1,i) 	= hloeph(1i*w(i));
 end
 figure, hold on, grid on
 plot(w,20*log10(abs(squeeze(hph_(1,1,:)))),'-','LineWidth',lw), set(gca,'XScale','log')
@@ -348,9 +346,9 @@ opt.target  = 1e-12;
 ```
 
 Examinate the outputs `htng` and `itng`, and conclude for either $G_1$ or $G_2$,
-- on the approximation order $r$ and McMillan degree $\nu$;
+- on the approximation order $r$ (`itng.r`) and McMillan degree $\nu$ (`itng.nu`);
+- on the normalized singular values of the Loewner pencil (`itng.sv`);
 - on the accuracy of the eigenvalues of the obtained model;
-- on the normalized singular values of the Loewner pencil;
 - on frequency gain and phase response (by plotting Bode and/or Nyquist);
 - on the Sylvseter equations property;
 - on the informations contained in `itng` (have a deeper look at these informations).
@@ -367,7 +365,6 @@ la_ = sort([la_ conj(la_)]);
 mu_ = (logspace(-2,2,nip)+.1)*1i; 
 mu_ = sort([mu_ conj(mu_)]);
 ```
-
 Construct the new data `W` and `V` just as in Exercise \#1.
 
 ### Construct the rational interpolant (apply Loewner tangential)
@@ -381,9 +378,9 @@ opt.real    			= false;
 ```
 
 Examinate the outputs `htng_cplx` and `itng_cplx`, and conclude for either $G_1$ or $G_2$,
-- on the approximation order $r$ and McMillan degree $\nu$;
+- on the approximation order $r$ (`itng_cplx.r`) and McMillan degree $\nu$ (`itng_cplx.nu`);
+- on the normalized singular values of the Loewner pencil (`itng_cplx.sv`);
 - on the accuracy of the eigenvalues of the obtained model;
-- on the normalized singular values of the Loewner pencil;
 - on frequency gain and phase response (by plotting Bode and/or Nyquist);
 - on the Sylvseter equations property;
 - on the informations contained in `itng_cplx` (have a deeper look at these informations).
@@ -401,11 +398,11 @@ opt.real    			= true;
 ```
 
 Examinate the outputs `htng_real` and `itng_real`, and conclude
-- on the approximation order $r$ and McMillan degree $\nu$;
+- on the approximation order $r$ (`itng_real.r`) and McMillan degree $\nu$ (`itng_real.nu`);
+- on the normalized singular values of the Loewner pencil (`itng_real.sv`);
 - on the accuracy of the eigenvalues of the obtained model;
-- on the normalized singular values of the Loewner pencil;
-- on the Sylvseter equations property;
 - on frequency gain and phase response (by plotting Bode and/or Nyquist);
+- on the Sylvseter equations property;
 - on the informations contained in `itng_real` (have a deeper look at these informations).
 
 Notice that the matrices and values are now real.
@@ -435,10 +432,16 @@ Examinate the outputs of the passive rational approximant `hloep`, `info_loep` a
 - on the informations contained in `info_loeph` (have a deeper look at these informations, especially on the pH matrices)
 
 
-## Exercise \#5: go far away and measure the flexibility of LF 
+## Exercise \#5: go far away and measure the flexibility of LF !
 
-- Play with target order.
-- Change the original function and try replace with an irrational one such as $G(s)=\frac{1}{se^{-s}+1}$.
+- Play with target order (`opt.target`).
+- Change the original function and try replace with an irrational one such as
+```Matlab
+G(s)=\frac{1}{se^{-s}+1}$.
+```
+```Matlab
+G(s)=\frac{s^3+s+1}{s+1}$.
+```
 - Enjoy!
 
 
