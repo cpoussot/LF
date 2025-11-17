@@ -47,6 +47,12 @@ The code (`+lf` folder)  provided in this GitHub page is given for open science 
 
 Moreover, for more numerically robust and involved implementation and features, we invite reader and users to refer to the [MDSPACK](https://mordigitalsystems.fr/static/mdspack_html/MDSpack-guide.html) library by [MOR Digital Systems](https://mordigitalsystems.fr).
 
+## Dependencies
+
+- MATLAB R2023b or later (tested on this version)
+- Toolboxes: control_toolbox may be used for some functionalities but can easily be avoided
+
+
 ## A simple MATLAB code example
 
 Here is a simple code that describes how to deploy the LF. Code below is `demo.m`.
