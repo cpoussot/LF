@@ -18,6 +18,8 @@ hloeph      = @(s) ((Gr+Pr)')*((s*In-(Jr-Rr))\(Gr-Pr))+(Nr+Sr);
 Wcal        = [ Rr  Pr; Pr' Sr];
 Vcal        = [-Jr -Gr; Gr' Nr];
 %
+info.r      = length(A);
+info.Hr     = ss((Jr-Rr),(Gr-Pr),(Gr+Pr)',(Nr+Sr));
 info.Q      = Qr;
 info.J      = Jr;
 info.R      = Rr;

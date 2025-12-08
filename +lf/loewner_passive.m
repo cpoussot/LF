@@ -98,7 +98,9 @@ end
 D   = D  + Ds;
 W_  = W_ + Ds;
 V_  = V_ + Ds;
+
 % step 1: Loewner classic (with D)
+%robj                = opt.target;
 [h_loe,info_loe]    = lf.loewner_tng(la_,mu_,W_-D,V_-D,R,L,opt);
 info_loe.Dr         = D;
 info_loe.Hr.D       = D;
@@ -117,7 +119,7 @@ for ii = 1:numel(sz_la_pos)
     R(:,ii)         = sz_R_pos(end-nu+1:end,ii)/norm(sz_R_pos(end-nu+1:end,ii));
     W(1:ny,1:nu,ii) = h_loe(sz_la_pos(ii));
 end
-%
+
 %opt.stable      = true;
 opt.D           = D;
 opt.target      = -1;

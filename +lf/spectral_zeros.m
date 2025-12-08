@@ -38,6 +38,11 @@ end
 fprintf('>> Sectral Zeros Finite   : %d (th), %d (num) \n',2*n,numel(SZ))
 fprintf('>>               Infinite : %d (th), %d (num) \n',m,n_discard)
 
+% idx_pos = find(imag(SZ)>0);
+% idx_zer = find(imag(SZ)==0);
+% SZ_     = [SZ(idx_pos); conj(SZ(idx_pos))];
+% SZ      = [SZ(idx_zer); SZ_];
+
 % % Check spectral zeros solves the Z(s_j)r_j + Z^T(-s_j)r_j = 0
 % Hs  = @(s) C*((s*E-A)\B)+D;
 % for jj = 1:numel(SZ)
