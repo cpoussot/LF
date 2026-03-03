@@ -10,7 +10,7 @@ The Loewner framework (LF) can thus be viewed as a data-driven model identificat
 It is suited to approximate, from any data-set:
 - an interpolatory model given with a realization,
 - with minimal complexity,
-- and with potentially passivity and pH forlm preservation.
+- and with potentially passivity and pH form preservation.
 
 ## Contribution (dis)claim
 
