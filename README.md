@@ -1,4 +1,4 @@
-# Loewner Framework (LF)
+# Introduction
 
 ## Overview
 
@@ -50,7 +50,7 @@ Moreover, for more numerically robust and involved implementation and features, 
 ## Dependencies
 
 - MATLAB R2023b or later (tested on this version)
-- Toolboxes: control_toolbox may be used for some functionalities but can easily be avoided
+- Toolboxes: "Control System Toolbox" may be used for some functionalities but can easily be avoided
 
 
 ## A simple MATLAB code example
@@ -60,7 +60,7 @@ Here is a simple code that describes how to deploy the LF. Code below is `demo.m
 First add the path where the `+mlf` package is located.
 
 ```Matlab
-%addpath("location_of_lf") % Add the location of the +lf package
+addpath("location_of_lf") % Add the location of the +lf package
 ```
 
 ## Functions description
@@ -79,10 +79,9 @@ Please send any comment to C. Poussot-Vassal (charles.poussot-vassal@onera.fr) i
 
 ## Disclaimer
 
-Once again, this deposit consitutes a research code that accompany the paper mentionned above. It is not aimed to be included in any third party software without the consent of the authors. Authors decline responsabilities in case of problem when applying the code.
+This deposit consitutes a research code that accompany the paper mentionned above. It is not aimed to be included in any third party software without the consent of the authors. Authors decline responsabilities in case of problem when applying the code.
 
-Notice also that pathological cases may appear. A more advanced code, to deal with practical and theoretical issues/limitations is currently under developpement by the authors.
-
+Notice also that pathological cases may appear. A more advanced and professional code, to deal with practical and theoretical issues/limitations is currently under development by the authors.
 
 # Exercises suggestions
 
@@ -92,7 +91,7 @@ The following exercises are set up to discover the LF and some of its features. 
 
 ### Introduction
 
-Let us use the simple sinlge mass-spring-damper (MSD) system. The MSD is given the by following state-space equations,
+Let us use the simple single mass-spring-damper (MSD) system. The MSD is given the by following state-space equations,
 ```math
 \begin{array}{rcl}
 E\dot{\mathbf{x}}(t) &=& A{\mathbf{x}}(t)+Bu(t)\\
@@ -107,7 +106,7 @@ A = \left(\begin{array}{cc} 0 & 1\\ -\frac{k}{m} & -\frac{b}{m} \end{array}\righ
 B = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right)  ,\,
 C = \left(\begin{array}{cc} 0 & 1 \end{array}\right).
 ```
-Notice that this model is passive (but not stricty). Now remark that it admits a port Hamiltonian (pH) form, e.g. with these equations,
+Notice that this model is passive (but not stricty). Now remark that it admits a port Hamiltonian (pH) form, e.g., with these equations,
 ```math
 \begin{array}{rcl}
 M\dot{\mathbf{x}}(t)&=&(J-R)Q{\mathbf{x}}(t)+(G-P)u(t) \\
