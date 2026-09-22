@@ -1,5 +1,5 @@
 %function [Vproj,Wproj,Vproj_x0] = projectors(H,Hr,J,X,Y,la_,mu_,Rj,Li,PROJ)
-function [Vproj,Wproj,Vproj_x0] = projectors(H,info_loep,PROJ)
+function [Vproj,Wproj,Vproj_x0,info] = projectors(H,info_loep,PROJ)
 
 %
 Hr  = info_loep.Hr;
@@ -43,5 +43,10 @@ switch lower(PROJ)
         Vproj       = R;
         Wproj       = (O)';
 end
-Vproj       = Vproj*info_loep.Vchol;
+if isfield(info_loep,'Vchol')
+    Vproj   = Vproj*info_loep.Vchol;
+end
 Vproj_x0    = Hr.e\(Wproj');
+
+info.O = O;
+info.R = R;
