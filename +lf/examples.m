@@ -40,6 +40,9 @@ switch CAS
         nu  = 1;
         S   = ss(tf([2 4],[1 1]));
         S.E = eye(length(S.A));
+        %
+        ph.dx   = @(t,x,u) S.A*x + S.B*u;
+        ph.y    = @(x,u) S.C*x + S.D*u;
     case 'siso_passive_aca' % Passive RLC by ACA
         A   = [-20 -10 0 0 0; 10 0 -10 0 0; 0 10 0 -10 0; 0 0 10 0 -10; 0 0 0 10 -2];
         B   = [20 0 0 0 0]';
@@ -49,6 +52,9 @@ switch CAS
         D   = 2*eye(nu);
         E   = eye(size(A));
         S   = dss(A,B,C,D,E);
+        %
+        ph.dx   = @(t,x,u) A*x + B*u;
+        ph.y    = @(x,u) C*x + D*u;
     case 'mimo_passive_aca' % Passive RLC by ACA
         A   = [-20 -10 0 0 0; 10 0 -10 0 0; 0 10 0 -10 0; 0 0 10 0 -10; 0 0 0 10 -2];
         B   = [20 0 0 0 0; 0 0 20 0 0; 0 0 0 0 1]';
@@ -58,12 +64,18 @@ switch CAS
         D   = 2*eye(nu);
         E   = eye(size(A));
         S   = dss(A,B,C,D,E);
+        %
+        ph.dx   = @(t,x,u) A*x + B*u;
+        ph.y    = @(x,u) C*x + D*u;
     case 'siso_passive_gugercin' % Passive RLC by Serkan
         load('+lf/rlc_serkan200.mat')
         nu  = size(B,2);
         ny  = nu;
         E   = eye(size(A));
         S   = dss(A,B,C,D,E);
+        %
+        ph.dx   = @(t,x,u) A*x + B*u;
+        ph.y    = @(x,u) C*x + D*u;
     case 'msd'
         %m = 10; b = 3; k = 1;
         m = 1; b = 1; k = 1;
