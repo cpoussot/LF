@@ -82,7 +82,8 @@
 
 function [hrp,info] = loewner_passive(la_,mu_,W_,V_,R,L,D,opt)
 
-tol_sz  = 1e-10;
+%tol_sz  = 1e-10;
+tol_sz  = 1e-14;
 nu      = size(W_,1);
 ny      = nu;
 %
@@ -104,7 +105,8 @@ V_  = V_ + Ds;
 [h_loe,info_loe]    = lf.loewner_tng(la_,mu_,W_-D,V_-D,R,L,opt);
 info_loe.Dr         = D;
 info_loe.Hr.D       = D;
-[info_loe.Hr,~]     = stabsep(info_loe.Hr);
+%[info_loe.Hr,~]     = stabsep(info_loe.Hr);
+info_loe.Hr         = lf.mirror(info_loe.Hr);
 h_loe               = @(s) info_loe.Hr.C*((s*info_loe.Hr.E-info_loe.Hr.A)\info_loe.Hr.B) + info_loe.Hr.D;
 
 % step 2: spectral zeros
@@ -119,8 +121,6 @@ for ii = 1:numel(sz_la_pos)
     R(:,ii)         = sz_R_pos(end-nu+1:end,ii)/norm(sz_R_pos(end-nu+1:end,ii));
     W(1:ny,1:nu,ii) = h_loe(sz_la_pos(ii));
 end
-
-%opt.stable      = true;
 opt.D           = D;
 opt.target      = -1;
 [~,info2]       = lf.loewner_tng(la,-conj(la),W,-conj(W),R,R',opt);

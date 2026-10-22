@@ -41,8 +41,14 @@ switch CAS
         S   = ss(tf([2 4],[1 1]));
         S.E = eye(length(S.A));
         %
-        ph.dx   = @(t,x,u) S.A*x + S.B*u;
-        ph.y    = @(x,u) S.C*x + S.D*u;
+        [~,ph]  = lf.passive2ph(S);
+        In      = eye(length(S.a));
+        ph.h    = @(s) ((ph.G+ph.P).'*ph.Q)*((s*In-(ph.J-ph.R)*ph.Q)\(ph.G-ph.P))+(ph.N+ph.S);
+        ph.dx   = @(t,x,u) ((ph.J-ph.R)*ph.Q)*x + (ph.G-ph.P)*u;
+        ph.y    = @(x,u) ((ph.G+ph.P).'*ph.Q)*x + (ph.N+ph.S)*u;
+        % %
+        % ph.dx   = @(t,x,u) S.A*x + S.B*u;
+        % ph.y    = @(x,u) S.C*x + S.D*u;
     case 'siso_passive_aca' % Passive RLC by ACA
         A   = [-20 -10 0 0 0; 10 0 -10 0 0; 0 10 0 -10 0; 0 0 10 0 -10; 0 0 0 10 -2];
         B   = [20 0 0 0 0]';
@@ -53,8 +59,14 @@ switch CAS
         E   = eye(size(A));
         S   = dss(A,B,C,D,E);
         %
-        ph.dx   = @(t,x,u) A*x + B*u;
-        ph.y    = @(x,u) C*x + D*u;
+        [~,ph]  = lf.passive2ph(S);
+        In      = eye(length(S.a));
+        ph.h    = @(s) ((ph.G+ph.P).'*ph.Q)*((s*In-(ph.J-ph.R)*ph.Q)\(ph.G-ph.P))+(ph.N+ph.S);
+        ph.dx   = @(t,x,u) ((ph.J-ph.R)*ph.Q)*x + (ph.G-ph.P)*u;
+        ph.y    = @(x,u) ((ph.G+ph.P).'*ph.Q)*x + (ph.N+ph.S)*u;
+        % %
+        % ph.dx   = @(t,x,u) A*x + B*u;
+        % ph.y    = @(x,u) C*x + D*u;
     case 'mimo_passive_aca' % Passive RLC by ACA
         A   = [-20 -10 0 0 0; 10 0 -10 0 0; 0 10 0 -10 0; 0 0 10 0 -10; 0 0 0 10 -2];
         B   = [20 0 0 0 0; 0 0 20 0 0; 0 0 0 0 1]';
@@ -65,17 +77,29 @@ switch CAS
         E   = eye(size(A));
         S   = dss(A,B,C,D,E);
         %
-        ph.dx   = @(t,x,u) A*x + B*u;
-        ph.y    = @(x,u) C*x + D*u;
+        [~,ph]  = lf.passive2ph(S);
+        In      = eye(length(S.a));
+        ph.h    = @(s) ((ph.G+ph.P).'*ph.Q)*((s*In-(ph.J-ph.R)*ph.Q)\(ph.G-ph.P))+(ph.N+ph.S);
+        ph.dx   = @(t,x,u) ((ph.J-ph.R)*ph.Q)*x + (ph.G-ph.P)*u;
+        ph.y    = @(x,u) ((ph.G+ph.P).'*ph.Q)*x + (ph.N+ph.S)*u;
+        % %
+        % ph.dx   = @(t,x,u) A*x + B*u;
+        % ph.y    = @(x,u) C*x + D*u;
     case 'siso_passive_gugercin' % Passive RLC by Serkan
         load('+lf/rlc_serkan200.mat')
+        %n   = length(A)
         nu  = size(B,2);
         ny  = nu;
-        E   = eye(size(A));
-        S   = dss(A,B,C,D,E);
+        S   = ss(A,B,C,D);
         %
-        ph.dx   = @(t,x,u) A*x + B*u;
-        ph.y    = @(x,u) C*x + D*u;
+        [~,ph]  = lf.passive2ph(S);
+        In      = eye(length(S.a));
+        ph.h    = @(s) ((ph.G+ph.P).'*ph.Q)*((s*In-(ph.J-ph.R)*ph.Q)\(ph.G-ph.P))+(ph.N+ph.S);
+        ph.dx   = @(t,x,u) ((ph.J-ph.R)*ph.Q)*x + (ph.G-ph.P)*u;
+        ph.y    = @(x,u) ((ph.G+ph.P).'*ph.Q)*x + (ph.N+ph.S)*u;
+        % %
+        % ph.dx   = @(t,x,u) A*x + B*u;
+        % ph.y    = @(x,u) C*x + D*u;
     case 'msd'
         %m = 10; b = 3; k = 1;
         m = 1; b = 1; k = 1;
@@ -99,11 +123,13 @@ switch CAS
         ph.P    = [0; 0];
         ph.N    = 0;
         ph.S    = 0;
+        ph.Wcal = [ ph.R  ph.P; ph.P' ph.S];
+        ph.Vcal = [-ph.J -ph.G; ph.G' ph.N];
         ph.h    = @(s) ((ph.G+ph.P).'*ph.Q)*((s*In-(ph.J-ph.R)*ph.Q)\(ph.G-ph.P))+(ph.N+ph.S);
         ph.dx   = @(t,x,u) ((ph.J-ph.R)*ph.Q)*x + (ph.G-ph.P)*u;
         ph.y    = @(x,u) ((ph.G+ph.P).'*ph.Q)*x + (ph.N+ph.S)*u;
 end
 %
-eigS        = eig(S);
+%eigS        = eig(S);
 [A,B,C,D,E] = dssdata(S);
 G           = @(s) C*((s*E-A)\B)+D;
