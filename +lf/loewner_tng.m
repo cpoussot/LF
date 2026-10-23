@@ -74,7 +74,7 @@
 function [hr,info] = loewner_tng(la_,mu_,W_,V_,R,L,opt)
 
 TOL_CC  = 1e-12;
-TOL_SV  = 1e-15;
+TOL_SV  = 1e-14;
 %
 if ~isempty(intersect(la_,mu_)) 
     error('Repetition in "la" and "mu"')
@@ -189,9 +189,14 @@ if isempty(robj) | isinf(robj)
 elseif robj < 1
     r   = sum(sv>robj);
     nu_ = sum(sv_nu>robj);
+    %r   = min(robj,r)
+    %pause
+    %nu_ = min(robj,nu_);
 elseif robj >= 1
-    r   = robj;
-    nu_ = robj;
+    %r   = robj;
+    %nu_ = robj;
+    r   = min(robj,sum(sv>TOL_SV));
+    nu_ = min(robj,sv_nu>TOL_SV);
 end
 X = []; Y = [];
 if robj > 0

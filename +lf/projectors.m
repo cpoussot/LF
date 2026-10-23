@@ -46,7 +46,12 @@ end
 if isfield(info_loep,'Vchol')
     Vproj   = Vproj*info_loep.Vchol;
 end
+% Orthogonalize
+Wproj       = Wproj/((Wproj'*Vproj)');
+%r           = size(Vproj,2);
+%Wproj       = Wproj*((Wproj'*Vproj)\eye(r))';
+%Wproj'*Vproj %= I
+%
 Vproj_x0    = Hr.e\(Wproj');
-
-info.O = O;
-info.R = R;
+info.O      = O;
+info.R      = R;

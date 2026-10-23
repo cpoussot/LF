@@ -4,24 +4,31 @@ set(groot,'defaultlinelinewidth',2)
 set(groot,'defaultlinemarkersize',4)
 set(groot,'defaultaxesfontsize',18)
 list_factory = fieldnames(get(groot,'factory')); index_interpreter = find(contains(list_factory,'Interpreter')); for i = 1:length(index_interpreter); set(groot, strrep(list_factory{index_interpreter(i)},'factory','default'),'latex'); end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% BEGIN: TO ADAPT BY USER
+% Add Loewner package
+addpath('/Users/charles/Documents/GIT/lf')
+%%% Select example
+CAS = 'siso_simple';
+CAS = 'siso_passive_simple';
+%CAS = 'mimo_rand';
+%CAS = 'mimo_large';
+%%% Select order
+robj = 1e-12;
+%%% END: TO ADAPT BY USER
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% General variables 
 lw  = 3;  % linewidth
 mw  = 20; % markersize
 
 %%% Select example
-CAS = 'siso_simple';
-%CAS = 'siso_passive_simple';
-%CAS = 'mimo_rand';
-%CAS = 'mimo_large';
 [G,S,nu,ny] = lf.examples(CAS);
 
 %%% Data
 nip = 100;
 la_ = (logspace(-2,2,nip))*1i;    la_ = sort([la_ conj(la_)]);
 mu_ = (logspace(-2,2,nip)+.1)*1i; mu_ = sort([mu_ conj(mu_)]);
-%la_ = (logspace(-2,2,nip));
-%mu_ = [(logspace(-2,2,nip-2)+.1) -1i 1i];
 k   = length(la_);
 q   = length(mu_);
 R   = ones(nu,k);
@@ -31,10 +38,10 @@ for ii = 1:q; V(1:ny,1:nu,ii) = G(mu_(ii)); end
 
 %%% Loewner 
 opt         = [];
-opt.target  = 1e-12;
+opt.target  = robj;
 opt.D       = 0*ones(ny,nu);
 opt.real    = true;
-% Tangential 
+% >> Tangential 
 [htng,itng] = lf.loewner_tng(la_,mu_,W,V,R,L,opt);
 if ~itng.isCC
     test1 = itng.MU*itng.LL - itng.LL*itng.LA;
@@ -44,7 +51,7 @@ if ~itng.isCC
     test2 = itng.MU*itng.V*itng.R - itng.L*itng.W*itng.LA;
     norm(test1-test2)
 end
-% Block
+% >> Block
 [hblk,iblk] = lf.loewner_blk(la_,mu_,W,V,opt);
 
 %%% Some informations
@@ -54,36 +61,39 @@ size(itng.Hr)
 size(iblk.Hr) 
 [isreal(itng.Hr) isreal(iblk.Hr)]
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Plot
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% >> Singular values
 figure, hold on, grid on
-plot(itng.sv,'-o','MarkerSize',mw,'LineWidth',lw)
-plot(itng.sv_nu,'-x','MarkerSize',mw,'LineWidth',lw)
-plot(iblk.sv,'--o','MarkerSize',mw,'LineWidth',lw)
-plot(iblk.sv_nu,'--x','MarkerSize',mw,'LineWidth',lw)
+plot(itng.sv,'-o','MarkerSize',mw,'LineWidth',lw,'DisplayName','svd($[\bf{L},\bf{M}]$)')
+plot(itng.sv_nu,'-x','MarkerSize',mw,'LineWidth',lw,'DisplayName','svd($\bf{L}$)')
+plot(iblk.sv,'--o','MarkerSize',mw,'LineWidth',lw,'DisplayName','svd($[\bf{L},\bf{M}]$)')
+plot(iblk.sv_nu,'--x','MarkerSize',mw,'LineWidth',lw,'DisplayName','svd($\bf{L}$)')
 set(gca,'YScale','log')
 xlabel('$k$','Interpreter','latex')
 ylabel('Normalized singular value','Interpreter','latex')
-legend({'svd($[\bf{L},\bf{M}]$)','svd($\bf{L}$)', ... 
-        'svd($[\bf{L},\bf{M}]$)','svd($\bf{L}$)'},'interpreter','latex')
-
+title('Normalized singular values')
+legend('show','location','best','interpreter','latex')
+% >> Eigenvalues
 eigS  = eig(S);
 eigHt = eig(itng.Hr);
 eigHb = eig(iblk.Hr);
 figure, hold on, grid on
-plot(real(eigS),imag(eigS),'.','MarkerSize',mw,'LineWidth',lw);
-plot(real(eigHt),imag(eigHt),'o','MarkerSize',mw,'LineWidth',lw);
-plot(real(eigHb),imag(eigHb),'s','MarkerSize',mw,'LineWidth',lw);
+plot(real(eigS),imag(eigS),'.','MarkerSize',mw,'LineWidth',lw,'DisplayName','Original');
+plot(real(eigHt),imag(eigHt),'o','MarkerSize',mw,'LineWidth',lw,'DisplayName','Loewner tangent');
+plot(real(eigHb),imag(eigHb),'s','MarkerSize',mw,'LineWidth',lw,'DisplayName','Loewner block' );
 xlabel('Real','Interpreter','latex')
 ylabel('Imag.','Interpreter','latex')
-legend({'Original' 'Loewner tangent' 'Loewner block'},'Interpreter','latex','location','northwest')
-
+title('Eigenvalues')
+legend('show','location','best','interpreter','latex')
+% >> Bodemag
 w = logspace(-2,3,300);
 for i = 1:numel(w)
     G_(1:ny,1:nu,i)     = G(1i*w(i));
     htng_(1:ny,1:nu,i)  = htng(1i*w(i));
     hblk_(1:ny,1:nu,i)  = hblk(1i*w(i));
 end
-
 figure, hold on, kk = 0;
 for out = 1:ny
     for in = 1:nu
@@ -95,5 +105,5 @@ for out = 1:ny
         if out==ny; xlabel('pulsation [rad/s]'); end
     end
 end
-sgtitle('Bode magnitude')
+sgtitle('Bode magnitude','FontSize',24)
 legend({'Original' 'Loewner tangent' 'Loewner block'},'Interpreter','latex','location','best')

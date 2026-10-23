@@ -112,7 +112,7 @@ switch CAS
         A   = [0 1; -k/m -b/m];
         B   = [0; 1/m];
         C   = [0 1];
-        D   = 0;
+        D   = 0*10;
         S   = dss(A,B,C,D,E);
         % 
         In      = eye(n);
@@ -122,9 +122,22 @@ switch CAS
         ph.G    = [0; 1/m];
         ph.P    = [0; 0];
         ph.N    = 0;
-        ph.S    = 0;
+        ph.S    = D;
         ph.Wcal = [ ph.R  ph.P; ph.P' ph.S];
         ph.Vcal = [-ph.J -ph.G; ph.G' ph.N];
+        ph.h    = @(s) ((ph.G+ph.P).'*ph.Q)*((s*In-(ph.J-ph.R)*ph.Q)\(ph.G-ph.P))+(ph.N+ph.S);
+        ph.dx   = @(t,x,u) ((ph.J-ph.R)*ph.Q)*x + (ph.G-ph.P)*u;
+        ph.y    = @(x,u) ((ph.G+ph.P).'*ph.Q)*x + (ph.N+ph.S)*u;
+    case 'heat'
+        A       = load('+lf/heatA.mat'); A = A.A;
+        E       = load('+lf/heatE.mat'); E = E.E;
+        B       = load('+lf/heatB.mat'); B = B.B;
+        S       = dss(A,B,B',0,E);
+        nu      = size(B,2);
+        ny      = nu;
+        %
+        [~,ph]  = lf.passive2ph(S);
+        In      = eye(length(S.a));
         ph.h    = @(s) ((ph.G+ph.P).'*ph.Q)*((s*In-(ph.J-ph.R)*ph.Q)\(ph.G-ph.P))+(ph.N+ph.S);
         ph.dx   = @(t,x,u) ((ph.J-ph.R)*ph.Q)*x + (ph.G-ph.P)*u;
         ph.y    = @(x,u) ((ph.G+ph.P).'*ph.Q)*x + (ph.N+ph.S)*u;
