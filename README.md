@@ -143,7 +143,7 @@ To familiarize you with LF, let us start with a very simple hand-written exercis
 ```
 2. Evaluate the data 
 ```math
-H(\lambda_1)=w_1,H(\lambda_2)=w_2 \text{ and }  H(\mu_1)=v_1,H(\mu_2)=v_2.
+H(\lambda_1)=w_1,H(\lambda_2)=w_2,H(\lambda_3)=w_3 \text{ and }  H(\mu_1)=v_1,H(\mu_2)=v_2,H(\mu_3)=v_3.
 ```
 3. Construct the Loewner matrix $\mathbb L$.
 4. Construct the shifted Loewner matrix $\mathbb M$.
