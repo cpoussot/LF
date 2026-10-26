@@ -139,7 +139,7 @@ To familiarize you with LF, let us start with a very simple hand-written exercis
 
 1. Select very simple interpolation points, e.g.
 ```math
-\lambda = [1,2] \text{ and } \mu = -\lambda.
+\lambda = [1,2,3] \text{ and } \mu = -\lambda.
 ```
 2. Evaluate the data 
 ```math
