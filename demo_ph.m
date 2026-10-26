@@ -9,12 +9,12 @@ list_facto = fieldnames(get(groot,'factory')); index_interpreter = find(contains
 % Add Loewner package
 addpath('/Users/charles/Documents/GIT/lf')
 %%% Choose case & order
-CAS     = 'heat';
+%CAS     = 'heat';
 %CAS     = 'siso_passive_gugercin'; robj = 5;
-%CAS     = 'siso_passive_simple'; robj = 1e-12;
+CAS     = 'siso_passive_simple'; robj = 1e-12;
 %CAS     = 'siso_passive_aca'; robj = []; %robj = 5
-%CAS     = 'msd'; robj = [];
-%CAS     = 'mimo_passive_aca';
+CAS     = 'msd'; robj = [];
+%CAS     = 'mimo_passive_aca'; robj = [];
 %%% END: TO ADAPT BY USER
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -48,7 +48,7 @@ opt.D       = 0*ones(ny,nu);
 opt.real    = true;
 [hloe,iloe] = lf.loewner_tng(la_,mu_,W,V,R,L,opt);
 
-%%% Loewner tangential pH
+%%% Loewner pH
 D               = S.D;
 opt.Ds          = .1;
 [hloep,iloep]   = lf.loewner_passive(la_,mu_,W,V,R,L,D,opt);
@@ -225,7 +225,7 @@ legend('show','Location','Best'); xlabel('Time [s]'), ylabel('Hamiltonian'),
 subplot(222), hold on
 plot(tt,Efom,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$\mathcal E=\mathbf{u}^\top\mathbf{y}-\mathbf{u}^\top S \mathbf{u}$'), grid on
 plot(tt,Erom,'--','LineWidth',lw,'DisplayName','$\hat \mathcal E=\mathbf{\hat u}^\top\mathbf{\hat y}-\mathbf{u}^\top \hat S \mathbf{u}$')
-legend('show','Location','Best'); xlabel('Time [s]'), ylabel('Passivity'),
+legend('show','Location','Best'); xlabel('Time [s]'), ylabel('Energy supplier'),
 subplot(223), hold on
 plot(tt,Dfom ,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$\mathcal D=-\mathbf x^\top R \mathbf x$'), grid on
 plot(tt,Drom ,'--','LineWidth',lw,'DisplayName','$\hat \mathcal D=-\mathbf{\hat{x}}^\top \hat R \mathbf{\hat{x}}$')
