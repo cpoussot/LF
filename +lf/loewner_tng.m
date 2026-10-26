@@ -102,6 +102,9 @@ elseif isa(opt,'struct')
         MAKE_REAL = true;
     end
 end
+if isempty(robj)
+    robj = inf;
+end
 %
 k   = length(la_);
 q   = length(mu_);
@@ -198,6 +201,7 @@ elseif robj >= 1
     r   = min(robj,sum(sv>TOL_SV));
     nu_ = min(robj,sv_nu>TOL_SV);
 end
+
 X = []; Y = [];
 if robj > 0
     Y   = L1(:,1:r);

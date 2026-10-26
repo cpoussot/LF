@@ -22,7 +22,7 @@ switch CAS
     case 'mimo_rand'
         ny  = 4;
         nu  = 3;
-        S   = rss(20,ny,nu);
+        S   = rss(100,ny,nu);
         S.E = eye(length(S.A));
         S.D = 2*ones(ny,nu);
     case 'mimo_large' % Full I/O 

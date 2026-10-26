@@ -87,11 +87,11 @@ Notice also that pathological cases may appear. A more advanced and professional
 
 The following exercises are set up to discover the LF and some of its features. It can be used to discover step by step how to set up and solve the interpolation problem.
 
-## Exercise \#1: simple mass-spring-damper example (MSD)
+## Exercise \#1: simple mass-spring-damper example (LF and pH-LF)
 
 ### Introduction
 
-Let us use the simple single mass-spring-damper (MSD) system. The MSD is given the by following state-space equations (in this case we intensionally added a direct term),
+Let us use the simple single mass-spring-damper (MSD) system. The MSD is given the by following state-space equations (in this case we intensionally added a direct term to make the function structly passive),
 ```math
 \begin{array}{rcl}
 E\dot{\mathbf{x}}(t) &=& A{\mathbf{x}}(t)+Bu(t)\\
@@ -223,7 +223,7 @@ Then, apply the nominal LF (tangential version) to compute an approximant:
 
 Now enforce passivity. As there is a $D$ term is equal to zero, the theorem derived in the slides (Benner et al. 2021) are no longer satisfied, use the numerical trick proposed in (Poussot-Vassal et al. 2023). And recover the pH structure:
 ```Matlab
-opt.Ds              = 1e-2; % numerical trick to deal with non-strictly passive systems (this one is)
+opt.Ds              = 0.1; % numerical trick to deal with non-strictly passive systems (this one is)
 [hloep,info_loep]   = lf.loewner_passive(la,mu,W,V,R,L,D,opt);
 [hloeph,info_loeph] = lf.passive2ph(info_loep.Hrn); % use the normalized Loewner realization
 ```

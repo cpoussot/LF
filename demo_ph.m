@@ -9,10 +9,10 @@ list_facto = fieldnames(get(groot,'factory')); index_interpreter = find(contains
 % Add Loewner package
 addpath('/Users/charles/Documents/GIT/lf')
 %%% Choose case & order
-%CAS     = 'heat';
+CAS     = 'heat';
 %CAS     = 'siso_passive_gugercin'; robj = 5;
 %CAS     = 'siso_passive_simple'; robj = 1e-12;
-CAS     = 'siso_passive_aca'; robj = []; %robj = 5
+%CAS     = 'siso_passive_aca'; robj = []; %robj = 5
 %CAS     = 'msd'; robj = [];
 %CAS     = 'mimo_passive_aca';
 %%% END: TO ADAPT BY USER

@@ -10,8 +10,7 @@ list_factory = fieldnames(get(groot,'factory')); index_interpreter = find(contai
 addpath('/Users/charles/Documents/GIT/lf')
 %%% Select example
 CAS = 'siso_simple';
-CAS = 'siso_passive_simple';
-%CAS = 'mimo_rand';
+CAS = 'mimo_rand';
 %CAS = 'mimo_large';
 %%% Select order
 robj = 1e-12;
@@ -24,6 +23,7 @@ mw  = 20; % markersize
 
 %%% Select example
 [G,S,nu,ny] = lf.examples(CAS);
+size(S)
 
 %%% Data
 nip = 100;
@@ -31,10 +31,12 @@ la_ = (logspace(-2,2,nip))*1i;    la_ = sort([la_ conj(la_)]);
 mu_ = (logspace(-2,2,nip)+.1)*1i; mu_ = sort([mu_ conj(mu_)]);
 k   = length(la_);
 q   = length(mu_);
-R   = ones(nu,k);
-L   = ones(q,ny);
+%R   = ones(nu,k);
+%L   = ones(q,ny);
 for ii = 1:k; W(1:ny,1:nu,ii) = G(la_(ii)); end
 for ii = 1:q; V(1:ny,1:nu,ii) = G(mu_(ii)); end
+for ii = 1:2:k; R(1:nu,ii) = rand(nu,1)+1i*rand(nu,1); R(1:nu,ii+1) = conj(R(1:nu,ii)); end
+for ii = 1:2:q; L(ii,1:ny) = rand(1,ny)+1i*rand(1,ny); L(ii+1,1:ny) = conj(L(ii,1:ny)); end
 
 %%% Loewner 
 opt         = [];
