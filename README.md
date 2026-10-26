@@ -71,6 +71,7 @@ help lf.loewnerMatrix
 help lf.loewner_tng
 help lf.loewner_blk
 help lf.loewner_passive
+help lf.passive2ph
 ```
 
 ## Feedbacks
