@@ -91,12 +91,12 @@ The following exercises are set up to discover the LF and some of its features. 
 
 ### Introduction
 
-Let us use the simple single mass-spring-damper (MSD) system. The MSD is given the by following state-space equations,
+Let us use the simple single mass-spring-damper (MSD) system. The MSD is given the by following state-space equations (in this case we intensionally added a direct term),
 ```math
 \begin{array}{rcl}
 E\dot{\mathbf{x}}(t) &=& A{\mathbf{x}}(t)+Bu(t)\\
-y(t) &=& C{\mathbf{x}}(t)
-\end{array}
+y(t) &=& C{\mathbf{x}}(t) + Du(t)
+\end{array},
 ```
 where ($x$ and $\dot x$ respectively are the position and the velocity of the mass),
 ```math
@@ -104,14 +104,15 @@ where ($x$ and $\dot x$ respectively are the position and the velocity of the ma
 E = I_2 ,\, 
 A = \left(\begin{array}{cc} 0 & 1\\ -\frac{k}{m} & -\frac{b}{m} \end{array}\right) ,\,
 B = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right)  ,\,
-C = \left(\begin{array}{cc} 0 & 1 \end{array}\right).
+C = \left(\begin{array}{cc} 0 & 1 \end{array}\right) ,\,
+D = 1.
 ```
 Notice that this model is passive (but not stricty). Now remark that it admits a port Hamiltonian (pH) form, e.g., with these equations,
 ```math
 \begin{array}{rcl}
 M\dot{\mathbf{x}}(t)&=&(J-R)Q{\mathbf{x}}(t)+(G-P)u(t) \\
 y(t)&=&(G+P)^\top Q{\mathbf{x}}(t)+(N+S)u(t)
-\end{array}
+\end{array},
 ```
 where ($\alpha_x$ and $\alpha_v$ are the energy variables), 
 ```math
@@ -122,11 +123,11 @@ R = \left(\begin{array}{cc} 0 & 0\\ 0 & \frac{b}{m^2} \end{array}\right) ,\,
 Q = \left(\begin{array}{cc} k & 0\\ 0 & m \end{array}\right) ,\,
 G = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right) ,\,
 P = \left(\begin{array}{c} 0\\ 0 \end{array}\right) ,\,
-N = S = 0.
+N = 0,\S = 1.
 ```
 Finally, notice that the corresponding transfer function reads
 ```math
-H(s) = \dfrac{s}{ms^2+bs+k}.
+H(s) = \dfrac{s}{ms^2+bs+k}+1.
 ```
 
 We want to recover/identify such a structure on the basis of data only, using the LF.
@@ -176,7 +177,7 @@ E   	= eye(n);
 A   	= [0 1; -k/m -b/m];
 B   	= [0; 1/m];
 C   	= [0 1];
-D   	= 0;
+D   	= 1;
 Hss 	= dss(A,B,C,D,E);
 hss 	= @(s) C*((s*E-A)\B) + D;
 % State-space with pH form X=ALPHA=[alpha_x alpha_v]
@@ -187,7 +188,7 @@ Q   	= [k 0; 0 m];
 G   	= [0; 1/m];
 P   	= [0; 0];
 N   	= 0;
-S   	= 0;
+S   	= 1;
 hph 	= @(s) ((G+P).'*Q)*((s*In-(J-R)*Q)\(G-P))+(N+S);
 hph_dx 	= @(t,x,u) ((J-R)*Q)*x + (G-P)*u;
 hph_y   = @(x,u) ((G+P).'*Q)*x + (N+S)*u;
@@ -203,7 +204,7 @@ zerS        = eig([A B; C D],blkdiag(E,zeros(ny,nu)));
 
 Let us now apply the LF. One may start with the same set-up (i.e. interpolation points) as in exercise \#1.1.
 ```Matlab
-pts     = [1 2];
+pts     = [1 2 3];
 la      = pts;
 mu      = -pts;
 k       = length(la);
