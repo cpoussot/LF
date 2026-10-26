@@ -124,7 +124,7 @@ R = \left(\begin{array}{cc} 0 & 0\\ 0 & \frac{b}{m^2} \end{array}\right) ,\,
 Q = \left(\begin{array}{cc} k & 0\\ 0 & m \end{array}\right) ,\,
 G = \left(\begin{array}{c} 0\\ \frac{1}{m} \end{array}\right) ,\,
 P = \left(\begin{array}{c} 0\\ 0 \end{array}\right) ,\,
-N = 0,\S = 1.
+N = 0,\, S = 1.
 ```
 Finally, notice that the corresponding transfer function reads
 ```math
