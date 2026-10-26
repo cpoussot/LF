@@ -1,3 +1,30 @@
+% Passive to pH form algorithm
+% Author: C. Poussot-Vassal [MOR Digital Systems & ONERA]
+% 
+% Syntax
+% [hr,info] = lf.passive2ph(H)
+%  
+% Input arguments
+%  - H : passive normalized state-space ODE (ss)
+% 
+% Output arguments
+%  - hr   : approximation model (handle function)
+%  - info : structure with informations about the Loewner world
+%    * r    : rational order (integer)
+%    * Hr   : state-space model (ss)
+%    * Q    : energy matrix 
+%    * J,N  : reflective matrices
+%    * R,S  : resistive matrices
+%    * G,P  : satisfy Wcal >= 0
+%    * Wcal : [R P; P' S] >= 0
+%    * Vcal : [-Jr -Gr; Gr' Nr] skew sym
+%    * dx   : handle function of state equations
+%    * y    : handle function of output equations
+% 
+% Description
+% Loewner rules.
+%
+
 function [hloeph,info] = passive2ph(H)
 
 %%% pH form in real struture
