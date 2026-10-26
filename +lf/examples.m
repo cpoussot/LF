@@ -86,7 +86,7 @@ switch CAS
         % ph.dx   = @(t,x,u) A*x + B*u;
         % ph.y    = @(x,u) C*x + D*u;
     case 'siso_passive_gugercin' % Passive RLC by Serkan
-        load('+lf/rlc_serkan200.mat')
+        [A,B,C,D] = lf.circuit_sparse(300, .1, 1, .1, .1);
         %n   = length(A)
         nu  = size(B,2);
         ny  = nu;
