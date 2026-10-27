@@ -35,7 +35,7 @@ switch lower(PROJ)
     case 'balreal'
         [Hr,G,T,Ti] = balreal(Hr);
         Vproj       = R*X*Ti;
-        Wproj       = (T*Y'*O)';
+        Wproj       = (T*Y'*O)';%
     case 'svd'
         Vproj       = R*X;
         Wproj       = (Y'*O)';
@@ -46,11 +46,8 @@ end
 if isfield(info_loep,'Vchol')
     Vproj   = Vproj*info_loep.Vchol;
 end
-% Orthogonalize
-Wproj       = Wproj/((Wproj'*Vproj)');
-%r           = size(Vproj,2);
-%Wproj       = Wproj*((Wproj'*Vproj)\eye(r))';
-%Wproj'*Vproj %= I
+% Orthogonalize?
+% Wproj       = Wproj/((Wproj'*Vproj)');
 %
 Vproj_x0    = Hr.e\(Wproj');
 info.O      = O;

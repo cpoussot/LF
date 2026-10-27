@@ -87,6 +87,7 @@ switch CAS
         % ph.y    = @(x,u) C*x + D*u;
     case 'siso_passive_gugercin' % Passive RLC by Serkan
         [A,B,C,D]   = lf.circuit_sparse(300, .1, 1, .1, .1);
+        %[A,B,C,D]   = lf.circuit_sparse(20, .1, 1, .1, .1);
         nu          = size(B,2);
         ny          = nu;
         S           = ss(A,B,C,D);
@@ -142,6 +143,5 @@ switch CAS
         ph.y    = @(x,u) ((ph.G+ph.P).'*ph.Q)*x + (ph.N+ph.S)*u;
 end
 %
-%eigS        = eig(S);
 [A,B,C,D,E] = dssdata(S);
 G           = @(s) C*((s*E-A)\B)+D;

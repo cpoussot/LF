@@ -11,7 +11,7 @@ addpath('/Users/charles/Documents/GIT/lf')
 %%% Choose case & order
 %CAS     = 'heat';
 %CAS     = 'siso_passive_gugercin'; robj = 5;
-CAS     = 'siso_passive_simple'; robj = 1e-12;
+%CAS     = 'siso_passive_simple'; robj = 1e-12;
 %CAS     = 'siso_passive_aca'; robj = []; %robj = 5
 CAS     = 'msd'; robj = [];
 %CAS     = 'mimo_passive_aca'; robj = [];
@@ -21,7 +21,7 @@ CAS     = 'msd'; robj = [];
 %%% General variables 
 lw      = 3;  % linewidth
 mw      = 20; % markersize
-col     = parula(8);
+colref  = orderedcolors('gem12');
 
 %%% Select example
 [G,S,nu,ny,ph]  = lf.examples(CAS);
@@ -61,9 +61,8 @@ r               = length(phr.Q);
  lf.isSkewHermitian(phr.Vcal)]
 
 %%% Computed associated Petrov-Galerkin projectors
-[Vp,Wp,Vx0]   = lf.projectors(S,iloep,'none');
-norm(Wp'*ph.Q*Vp - phr.Q)
-norm(Wp'*(ph.J-ph.R)*Vp - (phr.J-phr.R))
+[Vp,Wp,Vx0] = lf.projectors(S,iloep,'none');
+Wp          = Wp/((Wp'*Vp)');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Plot
@@ -73,8 +72,8 @@ figure
 subplot(131), hold on, grid on
 plot(iloe.sv,'-o','MarkerSize',mw,'LineWidth',lw,'DisplayName','svd($[\bf{L},\bf{M}]$)')
 plot(iloe.sv_nu,'-x','MarkerSize',mw,'LineWidth',lw,'DisplayName','svd($\bf{L}$)')
-plot(iloep.sv,'--^','MarkerSize',mw,'LineWidth',lw,'DisplayName','svd($[\bf{L},\bf{M}]$) passive')
-plot(iloep.sv_nu,'--v','MarkerSize',mw,'LineWidth',lw,'DisplayName','svd($\bf{L}$) passive')
+plot(iloep.sv,'--^','MarkerSize',mw,'LineWidth',lw,'MarkerFaceColor',colref(7,:),'DisplayName','svd($[\bf{L},\bf{M}]$) passive')
+plot(iloep.sv_nu,'--v','MarkerSize',mw,'LineWidth',lw,'MarkerFaceColor',colref(6,:),'DisplayName','svd($\bf{L}$) passive')
 set(gca,'YScale','log')
 xlabel('$k$','Interpreter','latex')
 ylabel('Normalized singular value','Interpreter','latex')
@@ -146,7 +145,22 @@ for out = 1:ny
     end
 end
 sgtitle('Bode magnitude','interpreter','latex','FontSize',26)
-legend({'pH-FOM' 'ROM (passive)' 'pH-ROM (pH)'},'Interpreter','latex','location','best')
+legend({'pH-FOM' 'ROM (passive)' 'pH-ROM'},'Interpreter','latex','location','best')
+% >> Nyquist
+figure, hold on, kk = 0;
+for out = 1:ny
+    for in = 1:nu
+        kk = kk + 1;
+        subplot(ny,nu,kk), hold on, grid on
+        plot(real(squeeze(G_(out,in,:)))     ,imag(squeeze(G_(out,in,:))),'-','MarkerSize',mw,'LineWidth',lw), set(gca,'XScale','log')
+        plot(real(squeeze(hloep_(out,in,:))) ,imag(squeeze(hloep_(out,in,:))),'--','MarkerSize',mw,'LineWidth',lw), set(gca,'XScale','log')
+        plot(real(squeeze(hloeph_(out,in,:))),imag(squeeze(hloeph_(out,in,:))),':','MarkerSize',mw,'LineWidth',lw), set(gca,'XScale','log')
+        if out==ny; xlabel('real'); end
+        if in==1; ylabel('imag'); end
+    end
+end
+sgtitle('Nyquist','interpreter','latex','FontSize',26)
+legend({'pH-FOM' 'ROM (passive)' 'pH-ROM'},'Interpreter','latex','location','best')
 % >> Time-domain simulation
 f           = .1;
 dt          = .01;
@@ -168,13 +182,13 @@ subplot(311), hold on
 plot(tt,uu,'-','LineWidth',lw,'DisplayName','$u$'), grid on
 legend('show'); xlabel('Time [s]'), ylabel('Input'),
 subplot(312), hold on
-plot(tt,yy,'-','LineWidth',lw,'DisplayName','pH-FOM'), grid on
-plot(tt,yr,'k--','LineWidth',lw,'DisplayName','pH-ROM')
+plot(tt,yy,'-','Color',colref(1,:),'LineWidth',lw,'DisplayName','pH-FOM'), grid on
+plot(tt,yr,'--','Color',colref(2,:),'LineWidth',lw,'DisplayName','pH-ROM')
 legend('show'); xlabel('Time [s]'), ylabel('Output'),
 subplot(313), hold on
-h1=plot(tt,xx,'-','LineWidth',lw,'Color',col(3,:)); grid on
-h2=plot(tt,xr,':','Color',col(5,:),'LineWidth',lw);
-h3=plot(tt,xrp,'k--','LineWidth',lw);
+h1=plot(tt,xx,'-','LineWidth',lw,'Color',colref(1,:)); grid on
+h2=plot(tt,xr,'--','Color',colref(2,:),'LineWidth',lw);
+h3=plot(tt,xrp,':','Color',colref(3,:),'LineWidth',lw);
 leg = legend([h1(1), h2(1), h3(1)], ... 
              ['pH-FOM, $\mathbf x\in R^{' num2str(size(xx,1)) '}$'],...
              ['pH-ROM, $\mathbf{\hat x}\in R^{' num2str(size(xr,1)) '}$'],...
@@ -188,9 +202,9 @@ if n < 10
     figure
     for ii = 1:n
         subplot(ceil(n/2),2,ii), hold on
-        plot(tt,abs(xx(ii,:)),'-','LineWidth',lw,'Color',col(3,:),'DisplayName',['pH-FOM, $\mathbf x\in R^{' num2str(size(xx,1)) '}$']); grid on
-        plot(tt,abs(xrp(ii,:)),'k--','LineWidth',lw,'DisplayName',['pH-ROM (lifted), $\mathbf{\hat x}_{\uparrow}=V\mathbf{\hat x}\in R^{' num2str(size(xrp,1)) '}$ and $\mathbf{\hat x}\in R^{' num2str(size(xr,1)) '}$']);
-        plot(tt,abs(xx(ii,:)-xrp(ii,:)),'-','LineWidth',lw,'Color',col(4,:),'DisplayName','error'); grid on, set(gca,'YScale','log')
+        plot(tt,abs(xx(ii,:)),'-','LineWidth',lw,'Color',colref(1,:),'DisplayName',['pH-FOM, $\mathbf x\in R^{' num2str(size(xx,1)) '}$']); grid on
+        plot(tt,abs(xrp(ii,:)),'--','LineWidth',lw,'Color',colref(2,:),'DisplayName',['pH-ROM (lifted), $\mathbf{\hat x}_{\uparrow}=V\mathbf{\hat x}\in R^{' num2str(size(xrp,1)) '}$ and $\mathbf{\hat x}\in R^{' num2str(size(xr,1)) '}$']);
+        plot(tt,abs(xx(ii,:)-xrp(ii,:)),'k-','LineWidth',lw,'DisplayName','error'); grid on, set(gca,'YScale','log')
         xlabel('Time [s]')
         h=gca; set(gca,'YLim',[1e-9 max(h.YLim)])
     end
@@ -218,21 +232,21 @@ end
 %
 figure, 
 subplot(221), hold on
-plot(tt,Hfom ,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$\mathcal H=\frac{1}{2}\mathbf x^\top Q \mathbf x$'), grid on
+plot(tt,Hfom ,'-','LineWidth',lw,'DisplayName','$\mathcal H=\frac{1}{2}\mathbf x^\top Q \mathbf x$'), grid on
 plot(tt,Hrom ,'--','LineWidth',lw,'DisplayName','$\hat \mathcal H=\frac{1}{2}\mathbf{\hat{x}}^\top \hat Q \mathbf{\hat{x}}$'),
 plot(tt,Hromp,':','LineWidth',lw,'DisplayName','$\hat \mathcal H_{\uparrow}=\frac{1}{2}\mathbf{\hat{x}}_{\uparrow}^\top V \hat Q W^\top\mathbf{\hat{x}}_{\uparrow}$'),
 legend('show','Location','Best'); xlabel('Time [s]'), ylabel('Hamiltonian'),
 subplot(222), hold on
-plot(tt,Efom,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$\mathcal E=\mathbf{u}^\top\mathbf{y}-\mathbf{u}^\top S \mathbf{u}$'), grid on
+plot(tt,Efom,'-','LineWidth',lw,'DisplayName','$\mathcal E=\mathbf{u}^\top\mathbf{y}-\mathbf{u}^\top S \mathbf{u}$'), grid on
 plot(tt,Erom,'--','LineWidth',lw,'DisplayName','$\hat \mathcal E=\mathbf{\hat u}^\top\mathbf{\hat y}-\mathbf{u}^\top \hat S \mathbf{u}$')
 legend('show','Location','Best'); xlabel('Time [s]'), ylabel('Energy supplier'),
 subplot(223), hold on
-plot(tt,Dfom ,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$\mathcal D=-\mathbf x^\top R \mathbf x$'), grid on
+plot(tt,Dfom ,'-','LineWidth',lw,'DisplayName','$\mathcal D=-\mathbf x^\top R \mathbf x$'), grid on
 plot(tt,Drom ,'--','LineWidth',lw,'DisplayName','$\hat \mathcal D=-\mathbf{\hat{x}}^\top \hat R \mathbf{\hat{x}}$')
 plot(tt,Dromp,':','LineWidth',lw,'DisplayName','$\hat \mathcal D=-\mathbf{\hat{x}}_{\uparrow}^\top V \hat R W^\top \mathbf{\hat{x}_{\uparrow}}$')
 legend('show','Location','Best'); xlabel('Time [s]'), ylabel('Damping'),
 subplot(224), hold on
-plot(tt,Efom+Dfom -Hfom_dt ,'-','Color',col(3,:),'LineWidth',lw,'DisplayName','$ \mathcal E+ \mathcal D - \frac{d}{dt}\mathcal H$'), grid on
+plot(tt,Efom+Dfom -Hfom_dt ,'-','LineWidth',lw,'DisplayName','$ \mathcal E+ \mathcal D - \frac{d}{dt}\mathcal H$'), grid on
 plot(tt,Erom+Drom -Hrom_dt ,'--','LineWidth',lw,'DisplayName','$ \hat \mathcal E+ \hat \mathcal D -\frac{d}{dt}\hat\mathcal H$')
 plot(tt,Erom+Dromp-Hromp_dt,':','LineWidth',lw,'DisplayName','$ \hat \mathcal E_{\uparrow}+ \hat \mathcal D_{\uparrow} -\frac{d}{dt}\hat\mathcal H_{\uparrow}$')
 legend('show','Location','Best'); xlabel('Time [s]'), ylabel('Balance'),
