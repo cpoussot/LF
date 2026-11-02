@@ -199,7 +199,7 @@ elseif robj >= 1
     %r   = robj;
     %nu_ = robj;
     r   = min(robj,sum(sv>TOL_SV));
-    nu_ = min(robj,sv_nu>TOL_SV);
+    nu_ = min(robj,sum(sv_nu>TOL_SV));
 end
 
 X = []; Y = [];
