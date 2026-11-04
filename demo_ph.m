@@ -1,5 +1,5 @@
 clearvars; close all; clc;
-set(groot,'DefaultFigurePosition', [200 100 1000 700]);
+%set(groot,'DefaultFigurePosition', [200 100 1000 700]);
 set(groot,'defaultlinelinewidth',2)
 set(groot,'defaultlinemarkersize',4)
 set(groot,'defaultaxesfontsize',18)
@@ -7,14 +7,13 @@ list_facto = fieldnames(get(groot,'factory')); index_interpreter = find(contains
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% BEGIN: TO ADAPT BY USER
 % Add Loewner package
-addpath('/Users/charles/Documents/GIT/lf')
+addpath('D:\cpoussot\Documents\ONERA\GIT\LF')
 %%% Choose case & order
-%CAS     = 'heat';
-%CAS     = 'siso_passive_gugercin'; robj = 5;
+%CAS     = 'siso_passive_gugercin'; robj = 1e-6;
 %CAS     = 'siso_passive_simple'; robj = 1e-12;
 %CAS     = 'siso_passive_aca'; robj = []; %robj = 5
 CAS     = 'msd'; robj = [];
-%CAS     = 'mimo_passive_aca'; robj = [];
+CAS     = 'mimo_passive_aca'; robj = [];
 %%% END: TO ADAPT BY USER
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -54,7 +53,7 @@ opt.Ds          = .1;
 [hloep,iloep]   = lf.loewner_passive(la_,mu_,W,V,R,L,D,opt);
 [hloeph,phr]    = lf.passive2ph(iloep.Hrn);
 r               = length(phr.Q);
-%
+%%
 [lf.isPositive(phr.Q) ... 
  lf.isPositive(phr.Wcal) ... 
  lf.isHermitian(phr.Wcal) ...
@@ -82,7 +81,7 @@ legend('show','interpreter','latex','location','best')
 % >> Spectral zeros
 subplot(132), hold on, grid on
 [~,SZ]      = lf.spectral_zeros(S);
-[~,SZloep]  = lf.spectral_zeros(iloep.Hr);
+[~,SZloep]  = lf.spectral_zeros(phr.Hr);
 plot(real(SZ),imag(SZ),'.','MarkerSize',mw,'LineWidth',lw,'DisplayName','FOM');
 plot(real(SZloep),imag(SZloep),'o','MarkerSize',mw,'LineWidth',lw,'DisplayName','ROM (passive)');
 axis tight
@@ -93,7 +92,7 @@ title('Spectral zeros','interpreter','latex','FontSize',26)
 % >> Eigenvalues
 subplot(133), hold on, grid on
 eigS        = eig(S);
-eigHloep    = eig(iloep.Hr);
+eigHloep    = eig(phr.Hr);
 plot(real(eigS),imag(eigS),'.','MarkerSize',mw,'LineWidth',lw,'DisplayName','FOM');
 plot(real(eigHloep),imag(eigHloep),'o','MarkerSize',mw,'LineWidth',lw,'DisplayName','ROM (passive)');
 xlabel('Real part','Interpreter','latex')
@@ -127,7 +126,7 @@ if nu == 1
 end
 % >> Bodemag
 figure, hold on, kk = 0;
-w = logspace(-2,3,300);
+w = logspace(-2,2,500);
 for i = 1:numel(w)
     G_(1:ny,1:nu,i)         = G(1i*w(i));
     hloep_(1:ny,1:nu,i)     = hloep(1i*w(i));
@@ -136,7 +135,7 @@ end
 for out = 1:ny
     for in = 1:nu
         kk = kk + 1;
-        subplot(ny,nu,kk), hold on, grid on
+        subplot(ny,nu,kk), hold on, grid on, axis tight
         plot(w,20*log10(abs(squeeze(G_(out,in,:)))),'-','MarkerSize',mw,'LineWidth',lw), set(gca,'XScale','log')
         plot(w,20*log10(abs(squeeze(hloep_(out,in,:)))),'--','MarkerSize',mw,'LineWidth',lw), set(gca,'XScale','log')
         plot(w,20*log10(abs(squeeze(hloeph_(out,in,:)))),':','MarkerSize',mw,'LineWidth',lw), set(gca,'XScale','log')
@@ -178,14 +177,14 @@ yr          = phr.y(xr,uu);
 xrp         = Vp*xr;
 % Compare output and internal variables
 figure, 
-subplot(311), hold on
+subplot(311), hold on, grid on
 plot(tt,uu,'-','LineWidth',lw,'DisplayName','$u$'), grid on
 legend('show'); xlabel('Time [s]'), ylabel('Input'),
-subplot(312), hold on
+subplot(312), hold on, grid on
 plot(tt,yy,'-','Color',colref(1,:),'LineWidth',lw,'DisplayName','pH-FOM'), grid on
 plot(tt,yr,'--','Color',colref(2,:),'LineWidth',lw,'DisplayName','pH-ROM')
 legend('show'); xlabel('Time [s]'), ylabel('Output'),
-subplot(313), hold on
+subplot(313), hold on, grid on
 h1=plot(tt,xx,'-','LineWidth',lw,'Color',colref(1,:)); grid on
 h2=plot(tt,xr,'--','Color',colref(2,:),'LineWidth',lw);
 h3=plot(tt,xrp,':','Color',colref(3,:),'LineWidth',lw);
@@ -231,21 +230,21 @@ for ii = 1:numel(tt)
 end
 %
 figure, 
-subplot(221), hold on
+subplot(221), hold on, grid on,
 plot(tt,Hfom ,'-','LineWidth',lw,'DisplayName','$\mathcal H=\frac{1}{2}\mathbf x^\top Q \mathbf x$'), grid on
 plot(tt,Hrom ,'--','LineWidth',lw,'DisplayName','$\hat \mathcal H=\frac{1}{2}\mathbf{\hat{x}}^\top \hat Q \mathbf{\hat{x}}$'),
 plot(tt,Hromp,':','LineWidth',lw,'DisplayName','$\hat \mathcal H_{\uparrow}=\frac{1}{2}\mathbf{\hat{x}}_{\uparrow}^\top V \hat Q W^\top\mathbf{\hat{x}}_{\uparrow}$'),
 legend('show','Location','Best'); xlabel('Time [s]'), ylabel('Hamiltonian'),
-subplot(222), hold on
+subplot(222), hold on, grid on,
 plot(tt,Efom,'-','LineWidth',lw,'DisplayName','$\mathcal E=\mathbf{u}^\top\mathbf{y}-\mathbf{u}^\top S \mathbf{u}$'), grid on
 plot(tt,Erom,'--','LineWidth',lw,'DisplayName','$\hat \mathcal E=\mathbf{\hat u}^\top\mathbf{\hat y}-\mathbf{u}^\top \hat S \mathbf{u}$')
 legend('show','Location','Best'); xlabel('Time [s]'), ylabel('Energy supplier'),
-subplot(223), hold on
+subplot(223), hold on, grid on,
 plot(tt,Dfom ,'-','LineWidth',lw,'DisplayName','$\mathcal D=-\mathbf x^\top R \mathbf x$'), grid on
 plot(tt,Drom ,'--','LineWidth',lw,'DisplayName','$\hat \mathcal D=-\mathbf{\hat{x}}^\top \hat R \mathbf{\hat{x}}$')
 plot(tt,Dromp,':','LineWidth',lw,'DisplayName','$\hat \mathcal D=-\mathbf{\hat{x}}_{\uparrow}^\top V \hat R W^\top \mathbf{\hat{x}_{\uparrow}}$')
 legend('show','Location','Best'); xlabel('Time [s]'), ylabel('Damping'),
-subplot(224), hold on
+subplot(224), hold on, grid on,
 plot(tt,Efom+Dfom -Hfom_dt ,'-','LineWidth',lw,'DisplayName','$ \mathcal E+ \mathcal D - \frac{d}{dt}\mathcal H$'), grid on
 plot(tt,Erom+Drom -Hrom_dt ,'--','LineWidth',lw,'DisplayName','$ \hat \mathcal E+ \hat \mathcal D -\frac{d}{dt}\hat\mathcal H$')
 plot(tt,Erom+Dromp-Hromp_dt,':','LineWidth',lw,'DisplayName','$ \hat \mathcal E_{\uparrow}+ \hat \mathcal D_{\uparrow} -\frac{d}{dt}\hat\mathcal H_{\uparrow}$')
