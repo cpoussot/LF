@@ -32,10 +32,11 @@ O   = real(J'*O);
 % PROJ = 'svd';       % <= original Loewner projected via SVD
 % PROJ = 'balreal';   % <= add a balanced realisation projection (for fun)
 switch lower(PROJ)
-    case 'balreal'
-        [Hr,G,T,Ti] = balreal(Hr);
-        Vproj       = R*X*Ti;
-        Wproj       = (T*Y'*O)';%
+    % case 'balreal'
+    %     [Hr,G,T,Ti] = balreal(Hr);
+    %     Vproj       = R*X*Ti;
+    %     Wproj       = (T*Y'*O)';%
+    %     Hr.e        = eye(n);
     case 'svd'
         Vproj       = R*X;
         Wproj       = (Y'*O)';
