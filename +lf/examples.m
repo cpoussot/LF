@@ -130,7 +130,7 @@ switch CAS
         ph.y    = @(x,u) ((ph.G+ph.P).'*ph.Q)*x + (ph.N+ph.S)*u;
     case 'heat'
         A       = load('+lf/heatA.mat'); A = A.A;
-        A       = A-1e-3*eye(length(A));
+        A       = A-1e-1*eye(length(A));
         E       = load('+lf/heatE.mat'); E = E.E;
         B       = load('+lf/heatB.mat'); B = B.B;
         S       = dss(A,B,B',0,E);
