@@ -96,14 +96,14 @@ li  = 1;
 for ii = 1:q
     li       = li:li+ny-1;
     VV(li,:) = reshape(V(:,:,ii),[size(V,1) size(V,2)]);
-    li       = li+ny;
+    li       = li(1)+ny;
 end
 WW  = zeros(ny,k*nu);
 co  = 1;
 for ii = 1:k
     co       = co:co+nu-1;
     WW(:,co) = reshape(W(:,:,ii),[size(W,1) size(W,2)]);
-    co       = co+nu;
+    co       = co(1)+nu;
 end
 
 %%% Loewner matrices

@@ -33,7 +33,7 @@ switch CAS
         S.E = eye(n);
         S.B = eye(n);
         S.C = eye(n);
-        S.D = ones(n,n);
+        S.D = 0*ones(n,n);
     %%% PASSIVE
     case 'siso_passive_simple' % Very simple
         ny  = 1;

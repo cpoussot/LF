@@ -3,7 +3,7 @@ set(groot,'DefaultFigurePosition', [200 100 1000 700]);
 set(groot,'defaultlinelinewidth',2)
 set(groot,'defaultlinemarkersize',4)
 set(groot,'defaultaxesfontsize',18)
-list_factory = fieldnames(get(groot,'factory')); index_interpreter = find(contains(list_factory,'Interpreter')); for i = 1:length(index_interpreter); set(groot, strrep(list_factory{index_interpreter(i)},'factory','default'),'latex'); end
+list_facto = fieldnames(get(groot,'factory')); index_interpreter = find(contains(list_facto,'Interpreter')); for i = 1:length(index_interpreter); set(groot, strrep(list_facto{index_interpreter(i)},'factory','default'),'latex'); end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% BEGIN: TO ADAPT BY USER
 % Add Loewner package

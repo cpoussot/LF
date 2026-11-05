@@ -1,5 +1,5 @@
 clearvars; close all; clc;
-%set(groot,'DefaultFigurePosition', [200 100 1000 700]);
+set(groot,'DefaultFigurePosition', [200 100 1000 700]);
 set(groot,'defaultlinelinewidth',2)
 set(groot,'defaultlinemarkersize',4)
 set(groot,'defaultaxesfontsize',18)
