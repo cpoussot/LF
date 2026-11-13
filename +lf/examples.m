@@ -7,33 +7,48 @@ switch CAS
         nu  = 1;
         S   = ss(tf([1 1],[1 5]));
         S.E = eye(length(S.A));
+        %
+        ph.dx   = @(t,x,u) S.A*x + S.B*u;
+        ph.y    = @(x,u)   S.C*x + S.D*u;
     case 'siso_simple' % simple
         ny  = 1;
         nu  = 1;
         S   = ss(tf(1,[1 0.01 1]));
         S.E = eye(length(S.A));
+        %
+        ph.dx   = @(t,x,u) S.A*x + S.B*u;
+        ph.y    = @(x,u)   S.C*x + S.D*u;
     case 'siso_rand'
         rng(1234)
         ny  = 1;
         nu  = 1;
-        S   = rss(100,ny,nu);
+        S   = stabsep(rss(100,ny,nu),'Offset',1e-2);
         S.E = eye(length(S.A));
         S.D = zeros(ny,nu);
+        %
+        ph.dx   = @(t,x,u) S.A*x + S.B*u;
+        ph.y    = @(x,u)   S.C*x + S.D*u;
     case 'mimo_rand'
         ny  = 4;
         nu  = 3;
-        S   = rss(100,ny,nu);
+        S   = stabsep(rss(100,ny,nu),1e-2);
         S.E = eye(length(S.A));
         S.D = 2*ones(ny,nu);
+        %
+        ph.dx   = @(t,x,u) S.A*x + S.B*u;
+        ph.y    = @(x,u)   S.C*x + S.D*u;
     case 'mimo_large' % Full I/O 
         n   = 7;
         nu  = n;
         ny  = n;
-        S   = rss(n,ny,nu);
+        S   = stabsep(rss(n,ny,nu),1e-2);
         S.E = eye(n);
         S.B = eye(n);
         S.C = eye(n);
         S.D = 0*ones(n,n);
+        %
+        ph.dx   = @(t,x,u) S.A*x + S.B*u;
+        ph.y    = @(x,u)   S.C*x + S.D*u;
     %%% PASSIVE
     case 'siso_passive_simple' % Very simple
         ny  = 1;
